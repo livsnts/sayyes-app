@@ -1,1 +1,2 @@
 import './cadastro';
+import './senha';

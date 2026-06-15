@@ -12,44 +12,65 @@
             class="
                 text-primary
                 pt-2
-                mb-0               
+                mb-0
             "
         >
             {{ $label }}
         </label>
     @endif
 
-    <input
-        id="{{ $name }}"
-        name="{{ $name }}"
-        type="{{ $type }}"
-        value="{{ old($name) }}"
-        {{
-            $attributes->merge([
-                'class' => '
-                    w-full
-                    mt-0
-                    mb-1
-                    px-4
-                    py-3
-                    rounded-lg
-                    border-2
-                    border-primary
-                    bg-transparent
-                    outline-none
-                    transition-all
-                    duration-200
+    <div class="relative">
 
-                    focus:ring-2
-                    focus:ring-primary/20
-                    focus:border-primary
+        <input
+            id="{{ $name }}"
+            name="{{ $name }}"
+            type="{{ $type }}"
+            value="{{ $type !== 'password' ? old($name) : '' }}"
+            {{
+                $attributes->merge([
+                    'class' => '
+                        w-full
+                        mt-0
+                        mb-1
+                        px-4
+                        py-3
+                        rounded-lg
+                        border-2
+                        border-primary
+                        bg-transparent
+                        outline-none
+                        transition-all
+                        duration-200
 
-                    disabled:bg-gray-100
-                    disabled:cursor-not-allowed
-                '
-            ])
-        }}
-    >
+                        focus:ring-2
+                        focus:ring-primary/20
+                        focus:border-primary
+
+                        disabled:bg-gray-100
+                        disabled:cursor-not-allowed
+                    '
+                ])
+            }}
+        >
+
+        @if($type === 'password')
+            <button
+                type="button"
+                class="
+                    absolute
+                    right-4
+                    top-1/2
+                    -translate-y-1/2
+                    text-primary
+                    cursor-pointer
+                "
+                onclick="togglePassword('{{ $name }}', this)"
+            >
+                <i class="fa-regular fa-eye" style="color: #19539d;"></i>
+            </button>
+        @endif
+
+    </div>
 
     @error($name)
         <span
