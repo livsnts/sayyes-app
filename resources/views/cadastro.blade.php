@@ -14,9 +14,9 @@
                     <x-input label="Nome" name="name" />
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <x-input label="Telefone" name="telefone" />
+                        <x-input label="Telefone" name="telefone" x-data x-mask="(99) 99999-9999" inputmode="numeric"/>
 
-                        <x-input label="CPF" name="cpf" />
+                        <x-input label="CPF" name="cpf" x-data x-mask="999.999.999-99" inputmode="numeric"/>
                     </div>
 
                     <x-input label="Cidade" name="cidade" />

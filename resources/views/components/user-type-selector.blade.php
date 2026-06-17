@@ -15,9 +15,9 @@
             <input
                 type="radio"
                 name="{{ $name }}"
-                value="noiva"
+                value="NOIVO"
                 class="hidden peer"
-                {{ old($name) === 'noiva' ? 'checked' : '' }}
+                {{ old($name) === 'NOIVO' ? 'checked' : '' }}
             >
 
             <img
@@ -35,9 +35,9 @@
             <input
                 type="radio"
                 name="{{ $name }}"
-                value="noivo"
+                value="NOIVO"
                 class="hidden peer"
-                {{ old($name) === 'noivo' ? 'checked' : '' }}
+                {{ old($name) === 'NOIVO' ? 'checked' : '' }}
             >
 
             <img
@@ -55,9 +55,9 @@
             <input
                 type="radio"
                 name="{{ $name }}"
-                value="assessor"
+                value="ASSESSOR"
                 class="hidden peer"
-                {{ old($name) === 'assessor' ? 'checked' : '' }}
+                {{ old($name) === 'ASSESSOR' ? 'checked' : '' }}
             >
 
             <img

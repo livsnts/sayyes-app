@@ -1,25 +1,20 @@
 @php
 
-$roleLabel = match($user->perfil) {
+$roleLabel = match($user->tipoUsuario) {
 
-    'assessor' => 'ASSESSOR',
-
-    'casal' =>
-        $user->sexo === 'F'
-        ? 'NOIVA'
-        : 'NOIVO',
-
+    'ASSESSOR' => 'ASSESSOR',
+    'NOIVO'    => $user->sexoUsuario === 'F' ? 'NOIVA' : 'NOIVO',
     default => ''
 };
 
-$icon = match($user->perfil) {
+$icon = match($user->tipoUsuario) {
 
-    'assessor' => 'phone.svg',
+    'ASSESSOR' => 'icone-assessor.png',
 
-    'casal' =>
-        $user->sexo === 'F'
-        ? 'rings-female.svg'
-        : 'rings-male.svg',
+    'NOIVO' =>
+        $user->sexoUsuario === 'F'
+        ? 'icone-noiva.png'
+        : 'icone-noivo.png',
 };
 
 @endphp

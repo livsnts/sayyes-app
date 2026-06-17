@@ -7,21 +7,21 @@ use App\Http\Controllers\UsuarioController;
 //  return view('nome da view que vai ser renderizada');
 // }
 
-Route::get('/inicio', function () {
+Route::get('/', function () {
     return view('welcome');
-});
-
-Route::get('/login', function () {
-    return view('login');
-});
+})->name('inicio');
 
 Route::get('/cadastro', function () {
     return view('cadastro');
-});
+})->name('cadastro');
 
 Route::post('/cadastro', [UsuarioController::class, 'store'])->name('cadastro.store');
 
-Route::get('/', [UsuarioController::class, 'index']);
+Route::get('/login', [UsuarioController::class, 'showLogin'])->name('login');
+
+Route::post('/login', [UsuarioController::class, 'login'])->name('login.store');
+
+Route::post('/logout', [UsuarioController::class, 'logout'])->name('logout');
 
 Route::get('/usuario/{id}', [UsuarioController::class, 'show']);
 

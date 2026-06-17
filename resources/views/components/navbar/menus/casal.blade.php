@@ -2,19 +2,19 @@
 
 <div class="flex gap-20">
 
-    <a href="/inicio">
+    <a href="/inicio" class="nav-link">
         Início
     </a>
 
-    <a href="/financas">
+    <a href="/financas" class="nav-link">
         Finanças
     </a>
 
-    <a href="/blog">
+    <a href="/blog" class="nav-link">
         Blog dos noivos
     </a>
 
-    <a href="/casamento">
+    <a href="/casamento" class="nav-link">
         Meu casamento
     </a>
 
