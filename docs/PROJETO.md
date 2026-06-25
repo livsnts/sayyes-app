@@ -62,58 +62,66 @@ nomeUsuario*, telefoneUsuario*, cpfUsuario (único), sexoUsuario,
 cepUsuario, cidadeUsuario, email* (único), senha*
 ```
 
+> **Convenção de chaves:** PK é sempre `id` (auto-incremento) e as FKs seguem o padrão Laravel `<tabela_singular>_id` (ex: `casamento_id`). Os nomes abaixo refletem a implementação real.
+
 #### Casamento
 ```
-idCasamento (PK), statusCasamento (ATIVO | REALIZADO | CANCELADO)*,
-nomeCasamento*, dataCasamento*, localCasamento, descricaoCasamento,
-imagemCasamento (BLOB), urlListaDePresentes
+id (PK), statusCasamento (ATIVO | REALIZADO | CANCELADO)*,
+nomeCasamento*, dataCasamento*, orcamentoTotal (DECIMAL 10,2),
+localCasamento, descricaoCasamento, imagemCasamento (BLOB), urlListaDePresentes
 ```
+> `orcamentoTotal` é a meta de orçamento global do casamento, usada no dashboard para comparar planejado vs contratado.
 
-#### CasamentoUsuario (tabela pivot N:N)
+#### CasamentoUsuario (tabela pivot N:N — `casamento_user`)
 ```
-casamento_idCasamento (FK)*, usuario_idUsuario (FK)*, papelUsuario (NOIVO | ASSESSOR)*
+casamento_id (FK)*, user_id (FK)*
 ```
-> Um casamento pode ter múltiplos usuários com papéis diferentes (ex: 2 noivos + 1 assessor).
+> Um casamento pode ter múltiplos usuários (ex: 2 noivos + 1 assessor). A pivot **não** tem `papelUsuario`: o papel de cada pessoa no casamento é derivado do `tipoUsuario` do próprio `Usuario`.
 
 #### Convidado
 ```
-idConvidado (PK), statusConvidado (PENDENTE | CONFIRMADO | RECUSADO)*,
+id (PK), statusConvidado (PENDENTE | CONFIRMADO | RECUSADO)*,
 nomeConvidado*, telefoneConvidado, tokenConfirmacao* (UUID),
 quantidadeMaxAcompanhantes*, dataConfirmacao, observacoesConfirmacao,
-alergiasConvidado, casamento_idCasamento (FK)*
+alergiasConvidado, casamento_id (FK)*
 ```
 > Vinculação de convidado ao casamento é feita por busca direta via e-mail, sem fluxo de convite formal.  
-> Confirmação de presença foi absorvida dentro de `Convidado` (não existe tabela separada).
+> Confirmação de presença foi absorvida dentro de `Convidado` (não existe tabela separada).  
+> O `tokenConfirmacao` (UUID) é gerado automaticamente na criação do registro (evento `creating` do model).
 
 #### Acompanhante
 ```
-idAcompanhante (PK), nomeAcompanhante*, alergiasAcompanhante,
-convidado_idConvidado (FK)*
+id (PK), nomeAcompanhante*, alergiasAcompanhante,
+convidado_id (FK)*
 ```
 
 #### FornecedorConfianca (catálogo do assessor)
 ```
-idFornecedorConfianca (PK), nomeFornecedorConfianca*, categoriaFornecedorConfianca,
+id (PK), nomeFornecedorConfianca*, categoriaFornecedorConfianca,
 telefoneFornecedorConfianca, instagramFornecedorConfianca,
-usuario_idUsuario (FK)* — usuário que o cadastrou
+user_id (FK)* — usuário que o cadastrou
 ```
+> `categoriaFornecedorConfianca` usa o enum PHP `App\Enums\CategoriaFornecedor` (lista compartilhada com `FornecedorCasamento`).
 
 #### FornecedorCasamento
 ```
-idFornecedorCasamento (PK), statusFornecedorCasamento*, nomeFornecedorCasamento*,
-categoriaFornecedorCasamento, valorTotalFornecedorCasamento (DECIMAL 10,2),
+id (PK), statusFornecedorCasamento (EM_PESQUISA | EM_NEGOCIACAO | CONTRATADO | CANCELADO)*,
+nomeFornecedorCasamento*, categoriaFornecedorCasamento,
+valorEstimadoFornecedorCasamento (DECIMAL 10,2), valorTotalFornecedorCasamento (DECIMAL 10,2),
 contratoFornecedorCasamento, observacoesFornecedorCasamento,
-fornecedorConfianca_idFornecedorConfianca (FK, opcional),
-casamento_idCasamento (FK)*
+fornecedor_confianca_id (FK, opcional), casamento_id (FK)*
 ```
-> `FornecedorConfianca` e `FornecedorCasamento` são entidades separadas por decisão de modelagem.
+> `FornecedorConfianca` e `FornecedorCasamento` são entidades separadas por decisão de modelagem.  
+> `valorEstimadoFornecedorCasamento` é quanto se esperava gastar; comparado a `valorTotalFornecedorCasamento` (contratado) no dashboard.  
+> `categoriaFornecedorCasamento` usa o enum `App\Enums\CategoriaFornecedor`.  
+> `contratoFornecedorCasamento` guarda o **caminho** do PDF do contrato (opcional), armazenado em disco via Storage — não o conteúdo do arquivo.
 
 #### Pagamento (parcelas do fornecedor)
 ```
-idPagamento (PK), statusPagamento (PENDENTE | PAGO | ATRASADO)*,
+id (PK), statusPagamento (PENDENTE | PAGO | ATRASADO)*,
 valorParcela* (DECIMAL 10,2), dataVencimento, dataPagamento,
 numeroParcela, observacao,
-fornecedor_idFornecedorCasamento (FK)*
+fornecedor_casamento_id (FK)*
 ```
 > O status `ATRASADO` é **calculado em tempo real via PHP** (comparando `dataVencimento` com a data atual), não armazenado no banco.
 
@@ -165,12 +173,18 @@ fornecedor_idFornecedorCasamento (FK)*
 | Decisão | Justificativa |
 |---|---|
 | `ConfirmacaoPresenca` absorvida em `Convidado` | Simplificação do modelo; os dados de confirmação cabem na própria entidade. |
-| `Mensagem` e upload de contratos não implementados | Adiados para iterações futuras. |
+| `Mensagem` não implementado | Adiado para iterações futuras. |
 | Status `ATRASADO` calculado em PHP | Evita inconsistências; não é armazenado no banco. |
 | Tipo de usuário fixo no cadastro | Simplicidade; troca de tipo não é um caso de uso previsto. |
 | `FornecedorConfianca` ≠ `FornecedorCasamento` | Assessor mantém catálogo próprio independente dos eventos. |
 | Vinculação de convidado por e-mail | Sem fluxo de convite; busca direta simplifica o processo. |
 | WhatsApp via link `wa.me` | Sem integração de API; suficiente para o escopo do TCC. |
+| Confirmação de presença via token UUID | Acesso sem login por link único. Preferido a login (fricção desnecessária para um ato pontual) e a código curto (risco de colisão/adivinhação). UUID v4 garante unicidade e imprevisibilidade (122 bits aleatórios). |
+| FKs e PKs na convenção Laravel | PK `id` e FK `<tabela>_id`. O Eloquent infere relacionamentos automaticamente, reduzindo código e erros. |
+| `tipoUsuario` no `Usuario` (não na pivot) | Papel fixo por usuário controla interface/rotas/middleware; pivot `casamento_user` sem `papelUsuario`. Simplifica login e apresentação (Opção 3). |
+| Orçamento: meta global + estimado por fornecedor | `orcamentoTotal` no casamento e `valorEstimado` por fornecedor permitem comparação planejado vs contratado no dashboard, sem entidade de orçamento dedicada (deixada como evolução futura). |
+| Categorias de fornecedor via enum PHP | `App\Enums\CategoriaFornecedor` centraliza a lista (compartilhada pelas duas entidades de fornecedor), alimenta dropdown, filtro e validação. |
+| Contrato em PDF opcional via Storage | Caminho do arquivo no banco (`string`), arquivo em disco. Evita inchar o banco com BLOBs; prática padrão do Laravel. |
 
 ---
 
@@ -201,5 +215,6 @@ fornecedor_idFornecedorCasamento (FK)*
 - Não há troca de tipo de usuário após o cadastro.
 - Assessor que também é noivo deve escolher um único perfil (limitação documentada).
 - Módulo de mensagens internas não implementado nesta versão.
-- Upload de contratos de fornecedores não implementado nesta versão.
+- Orçamento detalhado por categoria não implementado (apenas meta global + estimativa por fornecedor); fica como evolução futura.
 - Integração com WhatsApp é apenas via link `wa.me`, sem API oficial.
+- O link de confirmação de presença, se compartilhado, permite que terceiros alterem a confirmação do convidado — risco aceitável dado o baixo impacto (não há dado sensível nem financeiro envolvido).
