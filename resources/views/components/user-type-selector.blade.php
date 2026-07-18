@@ -15,9 +15,9 @@
             <input
                 type="radio"
                 name="{{ $name }}"
-                value="NOIVO"
+                value="NOIVA"
                 class="hidden peer"
-                {{ old($name) === 'NOIVO' ? 'checked' : '' }}
+                {{ old($name) === 'NOIVA' ? 'checked' : '' }}
             >
 
             <img

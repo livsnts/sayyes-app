@@ -6,51 +6,30 @@
             <img src="{{ asset('images/logo-sayyes.png') }}" alt="Say Yes" class="h-16">
         </a>
 
-        @guest
-
-            <x-navbar.menus.guest />
-
-        @else
-
+        @auth
             @if(auth()->user()->tipoUsuario === 'NOIVO')
                 <x-navbar.menus.casal />
-            @endif
-
-            @if(auth()->user()->tipoUsuario === 'ASSESSOR')
+            @else
                 <x-navbar.menus.assessor />
             @endif
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit">Sair</button>
-            </form>
-        @endguest
-
+        @endauth
 
         @guest
+            <x-navbar.menus.guest />
 
             <div class="flex items-center gap-3">
-
                 <a href="/login">
-                    <x-button variant="outline" class="mt-0">
-                        Login
-                    </x-button>
+                    <x-button variant="outline" class="mt-0">Login</x-button>
                 </a>
-
-
                 <a href="/cadastro">
-                    <x-button variant="outline" class="mt-0">
-                        Cadastre-se
-                    </x-button>
+                    <x-button variant="outline" class="mt-0">Cadastre-se</x-button>
                 </a>
-
             </div>
-
-        @else
-            <h1>{{ auth()->user()->name }}</h1>
-            <x-navbar.menus.navbar-user :user="auth()->user()" />
-
         @endguest
+
+        @auth
+            <x-navbar.menus.navbar-user :user="auth()->user()" />
+        @endauth
 
     </div>
 

@@ -1,7 +1,8 @@
 @props([
     'label' => null,
     'name',
-    'type' => 'text'
+    'type' => 'text',
+    'value' => null,
 ])
 
 <div class="flex flex-col gap-2">
@@ -25,7 +26,9 @@
             id="{{ $name }}"
             name="{{ $name }}"
             type="{{ $type }}"
-            value="{{ $type !== 'password' ? old($name) : '' }}"
+            @if($type !== 'password')
+             value="{{ old($name, $value) }}"
+            @endif
             {{
                 $attributes->merge([
                     'class' => '

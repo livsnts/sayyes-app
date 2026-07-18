@@ -2,14 +2,7 @@
 
 @section('content')
     <x-navbar />
-    <!-- <div class="decorations">
-                <img src="{{ asset('images/doodles/bolo.png') }}" class="decoration cake">
-                <img src="{{ asset('images/doodles/aliancas.png') }}" class="decoration ring">
-                <img src="{{ asset('images/doodles/buque.png') }}" class="decoration bouquet">
-                <img src="{{ asset('images/doodles/carro.png') }}" class="decoration car">
-                <img src="{{ asset('images/doodles/tacas.png') }}" class="decoration drinks">
-                <img src="{{ asset('images/doodles/mesa.png') }}" class="decoration table">
-            </div> -->
+
     <main>
         <div class="flex justify-center py-12">
             <x-card-sketch class="w-full max-w-md">
@@ -21,8 +14,10 @@
                     <x-input label="E-mail" name="email" type="email" />
                     <x-input label="Senha" name="password" type="password" />
 
-                    @error('email')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @error('login')
+                        <div class="mb-4 mt-2 px-4 py-3 rounded-lg bg-danger/10 border border-danger text-danger text-sm">
+                            {{ $message }}
+                        </div>
                     @enderror
 
                     <a href="#" class="text-primary text-sm underline mt-1">

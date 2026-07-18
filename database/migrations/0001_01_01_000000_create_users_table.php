@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('sexoUsuario')->nullable();
             $table->string('cepUsuario')->nullable();
             $table->string('cidadeUsuario')->nullable();
-            $table->enum('tipoUsuario', ['NOIVO', 'ASSESSOR']);
+            $table->enum('tipoUsuario', ['NOIVO', 'ASSESSOR', 'ADMIN']);
             $table->enum('statusUsuario', ['ATIVO', 'INATIVO'])->default('ATIVO');
         });
 

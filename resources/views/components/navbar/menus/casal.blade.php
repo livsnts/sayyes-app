@@ -1,5 +1,9 @@
 {{-- navbar/casal-links.blade.php --}}
 
+@php
+    $casamentoAtivo = auth()->user()->casamentos()->where('statusCasamento', 'ATIVO')->first();
+@endphp
+
 <div class="flex gap-20">
 
     <a href="/inicio" class="nav-link">
@@ -14,8 +18,14 @@
         Blog dos noivos
     </a>
 
-    <a href="/casamento" class="nav-link">
-        Meu casamento
-    </a>
+    @if ($casamentoAtivo)
+        <a href="{{ route('casamento.show', $casamentoAtivo) }}" class="nav-link">
+            Meu casamento
+        </a>
+    @else
+        <a href="{{ route('casamento.create') }}" class="nav-link">
+            Criar casamento
+        </a>
+    @endif
 
 </div>

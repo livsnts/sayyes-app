@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('casamentos', function (Blueprint $table) {
             $table->id();
-            $table->enum('statusCasamento', ['ATIVO', 'REALIZADO', 'CANCELADO'])->default('ATIVO');
+            $table->enum('statusCasamento', ['ATIVO', 'REALIZADO', 'CANCELADO', 'INATIVO'])->default('ATIVO');
             $table->string('nomeCasamento');
             $table->date('dataCasamento');
             $table->decimal('orcamentoTotal', 10, 2)->nullable();
             $table->string('localCasamento')->nullable();
             $table->text('descricaoCasamento')->nullable();
             $table->binary('imagemCasamento')->nullable();
-            $table->string('urlListaDePresentes')->nullable();
+            $table->text('urlListaDePresentes')->nullable();
             $table->timestamps();
         });
     }

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup — Fornecedores do Casamento</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #fff2dc; color: #0b1957; }
+
+    .say-nav { display:flex; align-items:center; gap:2rem; padding:14px 24px; border-bottom:1px solid #e0d8c8; background:#fff; }
+    .say-logo { font-size:16px; font-weight:500; color:#0b1957; }
+    .say-nav a { font-size:14px; color:#666; text-decoration:none; }
+    .say-nav a.active { color:#0b1957; font-weight:500; }
+    .say-nav-right { margin-left:auto; font-size:13px; color:#666; text-align:right; }
+
+    .say-body { padding:24px; background:#fff2dc; min-height:100vh; }
+    .say-breadcrumb { font-size:12px; color:#999; margin-bottom:20px; }
+    .say-breadcrumb span { color:#666; }
+    .say-h1 { font-size:22px; font-weight:500; color:#0b1957; margin:0 0 4px; }
+    .say-sub { font-size:13px; color:#666; margin:0 0 24px; }
+
+    .say-summary { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:24px; }
+    .say-metric { background:#ffe8b8; border-radius:8px; padding:12px 16px; }
+    .say-metric-label { font-size:11px; color:#666; margin-bottom:4px; }
+    .say-metric-value { font-size:20px; font-weight:500; color:#0b1957; }
+    .say-metric-value.info { color:#1a6fb5; }
+    .say-metric-value.success { color:#2a7a2a; }
+
+    .say-tabs { display:flex; gap:4px; margin-bottom:24px; border-bottom:1px solid #e0d8c8; }
+    .say-tab { padding:8px 16px; font-size:13px; color:#666; cursor:pointer; border-bottom:2px solid transparent; }
+    .say-tab.active { color:#0b1957; border-bottom:2px solid #0b1957; font-weight:500; }
+
+    .say-card { background:#fff; border:1px solid #e0d8c8; border-radius:12px; margin-bottom:16px; overflow:hidden; }
+    .say-card-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:#f7f3eb; border-bottom:1px solid #e0d8c8; }
+    .say-card-title { font-size:14px; font-weight:500; color:#0b1957; display:flex; align-items:center; gap:8px; }
+
+    .say-badge { font-size:11px; padding:2px 8px; border-radius:99px; }
+    .badge-selected { background:#d2b3dc33; color:#6b3d8a; }
+    .badge-pendente { background:#fff3cd; color:#856404; }
+    .badge-contratado { background:#d4edda; color:#155724; }
+
+    .say-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .say-table th { padding:8px 16px; text-align:left; font-size:11px; font-weight:500; color:#666; border-bottom:1px solid #e0d8c8; }
+    .say-table td { padding:10px 16px; border-bottom:1px solid #e0d8c8; color:#0b1957; vertical-align:middle; }
+    .say-table tr:last-child td { border-bottom:none; }
+    .say-table tr.selected-row td { background:#d2b3dc18; }
+
+    .say-actions { display:flex; gap:6px; align-items:center; }
+    .say-btn { display:inline-flex; align-items:center; gap:4px; padding:5px 10px; font-size:12px; border-radius:8px; border:1px solid #ccc; background:#fff; color:#0b1957; cursor:pointer; }
+    .say-btn-primary { background:#0b1957; border-color:#0b1957; color:#fff; }
+    .say-btn-sm { padding:4px 8px; font-size:11px; }
+    .say-btn-warn { color:#856404; border-color:#ffc107; }
+
+    .say-add-row { display:flex; align-items:center; gap:8px; padding:10px 16px; border-top:1px solid #e0d8c8; flex-wrap:wrap; }
+    .say-add-row input, .say-add-row select { font-size:12px; padding:5px 8px; border-radius:8px; border:1px solid #ccc; background:#fff; color:#0b1957; }
+    .say-add-row input { width:160px; }
+    .say-add-row input.valor { width:100px; }
+
+    .say-new-cat { display:flex; align-items:center; gap:8px; padding:12px 16px; border-top:1px solid #e0d8c8; background:#fff; border-radius:12px; border:1px solid #e0d8c8; }
+    .say-new-cat select { font-size:13px; padding:6px 10px; border-radius:8px; border:1px solid #ccc; background:#fff; color:#0b1957; }
+    .say-new-cat span { font-size:13px; color:#666; }
+
+    .top-bar { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:8px; }
+  </style>
+</head>
+<body>
+
+<nav class="say-nav">
+  <span class="say-logo">💍 SayYes</span>
+  <a href="#">Início</a>
+  <a href="#" class="active">Fornecedores</a>
+  <a href="#">Finanças</a>
+  <a href="#">Convidados</a>
+  <a href="#">Meu casamento</a>
+  <div class="say-nav-right">Olá, Gabriela!<br><span style="font-size:11px">NOIVA</span></div>
+</nav>
+
+<div class="say-body">
+  <div class="say-breadcrumb">Meus casamentos › <span>Casamento G&L</span> › Fornecedores</div>
+
+  <div class="top-bar">
+    <div>
+      <h1 class="say-h1">Fornecedores</h1>
+      <p class="say-sub">Compare orçamentos e gerencie os fornecedores contratados do casamento.</p>
+    </div>
+    <button class="say-btn say-btn-primary" style="margin-bottom:24px">
+      <i class="ti ti-plus"></i> Adicionar direto
+    </button>
+  </div>
+
+  <div class="say-summary">
+    <div class="say-metric">
+      <div class="say-metric-label">Orçamento total</div>
+      <div class="say-metric-value">R$ 80.000</div>
+    </div>
+    <div class="say-metric">
+      <div class="say-metric-label">Contratado</div>
+      <div class="say-metric-value info">R$ 42.500</div>
+    </div>
+    <div class="say-metric">
+      <div class="say-metric-label">Disponível</div>
+      <div class="say-metric-value success">R$ 37.500</div>
+    </div>
+  </div>
+
+  <div class="say-tabs">
+    <div class="say-tab active">Orçamentos por categoria</div>
+    <div class="say-tab">Contratados</div>
+  </div>
+
+  <!-- Buffet -->
+  <div class="say-card">
+    <div class="say-card-header">
+      <div class="say-card-title">
+        <i class="ti ti-tools-kitchen-2"></i> Buffet
+      </div>
+      <span class="say-badge badge-contratado">1 selecionado</span>
+    </div>
+    <table class="say-table">
+      <thead>
+        <tr>
+          <th>Fornecedor</th>
+          <th>Valor orçado</th>
+          <th>Obs.</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="selected-row">
+          <td><strong>Buffet do João</strong> <span class="say-badge badge-selected" style="margin-left:6px">selecionado</span></td>
+          <td>R$ 18.000</td>
+          <td style="color:#666">Inclui garçons</td>
+          <td>
+            <div class="say-actions">
+              <button class="say-btn say-btn-sm say-btn-warn"><i class="ti ti-x"></i> Desselecionar</button>
+              <button class="say-btn say-btn-sm"><i class="ti ti-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Buffet da Maria</td>
+          <td>R$ 15.000</td>
+          <td style="color:#666">Sem bebidas</td>
+          <td>
+            <div class="say-actions">
+              <button class="say-btn say-btn-sm say-btn-primary"><i class="ti ti-check"></i> Selecionar</button>
+              <button class="say-btn say-btn-sm"><i class="ti ti-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Sabores & Arte</td>
+          <td>R$ 22.000</td>
+          <td style="color:#666">—</td>
+          <td>
+            <div class="say-actions">
+              <button class="say-btn say-btn-sm say-btn-primary"><i class="ti ti-check"></i> Selecionar</button>
+              <button class="say-btn say-btn-sm"><i class="ti ti-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="say-add-row">
+      <input type="text" placeholder="Nome do fornecedor" />
+      <input type="text" class="valor" placeholder="R$ 0,00" />
+      <input type="text" placeholder="Observações" style="width:140px" />
+      <button class="say-btn say-btn-primary say-btn-sm"><i class="ti ti-plus"></i> Adicionar</button>
+    </div>
+  </div>
+
+  <!-- Fotografia -->
+  <div class="say-card">
+    <div class="say-card-header">
+      <div class="say-card-title">
+        <i class="ti ti-camera"></i> Fotografia
+      </div>
+      <span class="say-badge badge-pendente">nenhum selecionado</span>
+    </div>
+    <table class="say-table">
+      <thead>
+        <tr>
+          <th>Fornecedor</th>
+          <th>Valor orçado</th>
+          <th>Obs.</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Studio Luz</td>
+          <td>R$ 8.500</td>
+          <td style="color:#666">Album incluso</td>
+          <td>
+            <div class="say-actions">
+              <button class="say-btn say-btn-sm say-btn-primary"><i class="ti ti-check"></i> Selecionar</button>
+              <button class="say-btn say-btn-sm"><i class="ti ti-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Foto & Arte</td>
+          <td>R$ 6.000</td>
+          <td style="color:#666">Drone incluso</td>
+          <td>
+            <div class="say-actions">
+              <button class="say-btn say-btn-sm say-btn-primary"><i class="ti ti-check"></i> Selecionar</button>
+              <button class="say-btn say-btn-sm"><i class="ti ti-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="say-add-row">
+      <input type="text" placeholder="Nome do fornecedor" />
+      <input type="text" class="valor" placeholder="R$ 0,00" />
+      <input type="text" placeholder="Observações" style="width:140px" />
+      <button class="say-btn say-btn-primary say-btn-sm"><i class="ti ti-plus"></i> Adicionar</button>
+    </div>
+  </div>
+
+  <!-- Nova categoria -->
+  <div class="say-new-cat">
+    <i class="ti ti-plus" style="color:#666"></i>
+    <span>Adicionar nova categoria:</span>
+    <select>
+      <option>Decoração</option>
+      <option>Música</option>
+      <option>Maquiagem e Cabelo</option>
+      <option>Doces e Bolo</option>
+      <option>Outro</option>
+    </select>
+    <button class="say-btn say-btn-primary say-btn-sm">Adicionar</button>
+  </div>
+</div>
+
+</body>
+</html>

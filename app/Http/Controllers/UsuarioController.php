@@ -23,12 +23,9 @@ class UsuarioController extends Controller
      */
     public function create()
     {
-        //
+        return view('cadastro');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate(
@@ -59,18 +56,17 @@ class UsuarioController extends Controller
             ]
         );
 
-        $sexo = match ($request->tipoUsuario) {
-            'NOIVA' => 'F',
-            'NOIVO' => 'M',
-            default => null,
-        };
-
         $usuario = User::create([
             'name' => $request->name,
             'telefoneUsuario' => $request->telefone,
             'cpfUsuario' => $request->cpf,
             'cidadeUsuario' => $request->cidade,
             'tipoUsuario' => in_array($request->tipoUsuario, ['NOIVA', 'NOIVO']) ? 'NOIVO' : 'ASSESSOR',
+            'sexoUsuario' => match ($request->tipoUsuario) {
+                'NOIVA' => 'F',
+                'NOIVO' => 'M',
+                default => null,
+            },
             'email' => $request->email,
             'password' => $request->password,
         ]);
@@ -91,17 +87,25 @@ class UsuarioController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit()
     {
-        //
+        return view('perfil', ['usuario' => auth()->user()]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'descricaoUsuario' => ['required', 'string', 'max:500'],
+        ]);
+
+        auth()->user()->update([
+            'descricaoUsuario' => $request->descricaoUsuario,
+        ]);
+
+        return back()->with('sucesso', 'Perfil atualizado com sucesso!');
     }
 
     /**
