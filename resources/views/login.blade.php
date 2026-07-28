@@ -20,7 +20,7 @@
                         </div>
                     @enderror
 
-                    <a href="#" class="text-primary text-sm underline mt-1">
+                    <a href="{{ route('password.request') }}" class="text-primary text-sm underline mt-1">
                         Esqueci a senha
                     </a>
 

@@ -6,16 +6,8 @@
         Início
     </a>
 
-    <a href="/clientes" class="nav-link">
-        Clientes
-    </a>
-
-    <a href="/eventos" class="nav-link">
+    <a href="{{ route('casamento.index') }}" class="nav-link">
         Eventos
-    </a>
-
-    <a href="/agenda" class="nav-link">
-        Agenda
     </a>
 
 </div>

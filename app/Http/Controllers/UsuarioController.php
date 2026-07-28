@@ -96,17 +96,32 @@ class UsuarioController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request)
-    {
-        $request->validate([
-            'descricaoUsuario' => ['required', 'string', 'max:500'],
-        ]);
+{
+    $request->validate([
+        'name'            => ['required', 'string', 'max:255'],
+        'telefoneUsuario' => ['required', 'string'],
+        'cidadeUsuario'   => ['required', 'string'],
+        'email'           => ['required', 'email', 'unique:users,email,' . auth()->id()],
+        'descricaoUsuario'=> ['nullable', 'string', 'max:500'],
+    ], [
+        'name.required'            => 'O nome é obrigatório.',
+        'telefoneUsuario.required' => 'O telefone é obrigatório.',
+        'cidadeUsuario.required'   => 'A cidade é obrigatória.',
+        'email.required'           => 'O e-mail é obrigatório.',
+        'email.email'              => 'Informe um e-mail válido.',
+        'email.unique'             => 'Este e-mail já está em uso.',
+    ]);
 
-        auth()->user()->update([
-            'descricaoUsuario' => $request->descricaoUsuario,
-        ]);
+    auth()->user()->update([
+        'name'             => $request->name,
+        'telefoneUsuario'  => $request->telefoneUsuario,
+        'cidadeUsuario'    => $request->cidadeUsuario,
+        'email'            => $request->email,
+        'descricaoUsuario' => $request->descricaoUsuario,
+    ]);
 
-        return back()->with('sucesso', 'Perfil atualizado com sucesso!');
-    }
+    return back()->with('sucesso', 'Perfil atualizado com sucesso!');
+}
 
     /**
      * Remove the specified resource from storage.

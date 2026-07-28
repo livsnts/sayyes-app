@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['name', 'email', 'password', 'telefoneUsuario', 'cpfUsuario', 'sexoUsuario', 'cepUsuario', 'cidadeUsuario', 'tipoUsuario', 'statusUsuario', 'descricaoUsuario'])]
 #[Hidden(['password', 'remember_token'])]
 
-class User extends Authenticatable
+class User extends Authenticatable implements CanResetPassword
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;

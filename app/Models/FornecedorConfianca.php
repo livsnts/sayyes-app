@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'categoriaFornecedorConfianca',
     'telefoneFornecedorConfianca',
     'instagramFornecedorConfianca',
+    // cidadeFornecedor investimentoBaixoMedioAlto 
 ])]
 
 class FornecedorConfianca extends Model

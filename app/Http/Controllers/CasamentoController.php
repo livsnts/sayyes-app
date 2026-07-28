@@ -10,6 +10,32 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class CasamentoController extends Controller
 {
     use AuthorizesRequests;
+
+    public function index(Request $request)
+    {
+        $query = auth()->user()->casamentos();
+
+        if ($request->filled('status')) {
+            $query->where('statusCasamento', $request->status);
+        }
+
+        if ($request->filled('nome')) {
+            $query->where('nomeCasamento', 'like', '%' . $request->nome . '%');
+        }
+
+        if ($request->filled('data_de')) {
+            $query->where('dataCasamento', '>=', $request->data_de);
+        }
+
+        if ($request->filled('data_ate')) {
+            $query->where('dataCasamento', '<=', $request->data_ate);
+        }
+
+        $casamentos = $query->orderBy('dataCasamento')->get();
+
+        return view('casamento.index', compact('casamentos'));
+    }
+
     public function create()
     {
         if (auth()->user()->tipoUsuario === 'NOIVO') {
