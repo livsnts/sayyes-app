@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\CasamentoController;
+use App\Http\Controllers\ConvidadoController;
 use App\Http\Controllers\PasswordResetController;
 
 Route::get('/', function () {
@@ -41,4 +42,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/casamentos/{casamento}/equipe', [CasamentoController::class, 'equipe'])->name('casamento.equipe');
     Route::get('/casamentos/{casamento}/buscar-usuario', [CasamentoController::class, 'buscarUsuario'])->name('casamento.buscar-usuario');
     Route::post('/casamentos/{casamento}/adicionar-membro', [CasamentoController::class, 'adicionarMembro'])->name('casamento.adicionar-membro');
+
+    // ---- Convidados ----
+    Route::get('/casamentos/{casamento}/convidados', [ConvidadoController::class, 'index'])->name('convidado.index');
+    Route::get('/casamentos/{casamento}/convidados/criar', [ConvidadoController::class, 'create'])->name('convidado.create');
+    Route::post('/casamentos/{casamento}/convidados', [ConvidadoController::class, 'store'])->name('convidado.store');
+    Route::post('/casamentos/{casamento}/convidados/importar', [ConvidadoController::class, 'importar'])->name('convidado.importar');
+    Route::get('/casamentos/{casamento}/convidados/{convidado}/editar', [ConvidadoController::class, 'edit'])->name('convidado.edit');
+    Route::put('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'update'])->name('convidado.update');
+    Route::delete('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'destroy'])->name('convidado.destroy');
 });
+
+// Pública - confirmação de presença via token
+Route::get('/confirmar/{token}', [ConvidadoController::class, 'confirmar'])->name('convidado.confirmar');
+Route::post('/confirmar/{token}', [ConvidadoController::class, 'salvarConfirmacao'])->name('convidado.salvar-confirmacao');
