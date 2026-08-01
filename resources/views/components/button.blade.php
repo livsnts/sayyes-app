@@ -15,7 +15,7 @@ $baseClasses = '
 ';
 
 $variantClasses = [
-    'primary' => 'bg-primary text-white hover:bg-primary-dark',
+    'primary' => 'border border-2 border-primary bg-primary text-white hover:bg-primary-dark',
     'secondary' => 'bg-secondary text-white hover:opacity-90',
     'outline' => 'border border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-white',
     'danger' => 'bg-danger text-white hover:bg-danger-dark'

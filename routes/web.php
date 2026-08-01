@@ -53,6 +53,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'destroy'])->name('convidado.destroy');
 });
 
-// Pública - confirmação de presença via token
+// ------ confirmação de presença via token --------
 Route::get('/confirmar/{token}', [ConvidadoController::class, 'confirmar'])->name('convidado.confirmar');
 Route::post('/confirmar/{token}', [ConvidadoController::class, 'salvarConfirmacao'])->name('convidado.salvar-confirmacao');

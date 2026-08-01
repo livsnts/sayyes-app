@@ -256,3 +256,10 @@ body {
     border: 3px solid #19539D;
     border-radius: 28px 22px 32px 18px / 18px 30px 20px 28px;
 }
+
+.titulo-card {
+    margin-bottom: calc(var(--spacing) * 4);
+    color: var(--color-primary);
+    font-weight: bold;
+    font-size: large;
+}

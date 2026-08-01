@@ -32,16 +32,9 @@
 
                 <div class="flex flex-col gap-2 mt-4">
                     <label for="orcamentoTotal" class="text-primary">Orçamento total*</label>
-                    <input
-                        type="text"
-                        name="orcamentoTotal"
-                        id="orcamentoTotal"
-                        inputmode="numeric"
-                        value="{{ old('orcamentoTotal') }}"
-                        x-data
-                        x-mask:dynamic="'R$ ' + $money($input, ',', '.', 2)"
-                        class="field-input"
-                    >
+                    <input type="text" name="orcamentoTotal" id="orcamentoTotal" inputmode="numeric"
+                        value="{{ old('orcamentoTotal') }}" x-data x-mask:dynamic="'R$ ' + $money($input, ',', '.', 2)"
+                        class="field-input">
                     @error('orcamentoTotal')
                         <span class="text-danger text-sm">{{ $message }}</span>
                     @enderror
@@ -49,11 +42,7 @@
 
                 <x-input label="Link da lista de presentes" name="urlListaDePresentes" type="url" />
 
-                <x-textarea
-                    label="Descrição"
-                    name="descricaoCasamento"
-                    :value="$casamento->descricaoCasamento"
-                />
+                <x-textarea label="Descrição" name="descricaoCasamento" :value="$casamento->descricaoCasamento" />
 
                 <div class="flex flex-col gap-2 mt-4">
                     <label class="text-primary">Foto do casal (opcional)</label>
@@ -67,15 +56,17 @@
                     @enderror
                 </div>
 
-                <div class="flex gap-3 mt-6">
-                    <a href="{{ route('casamento.show', $casamento) }}"
-                        class="flex-1 text-center py-3 rounded-lg border-2 border-primary text-primary font-semibold transition hover:bg-primary/10">
-                        Cancelar
+                <div>
+                    <a href="{{ route('casamento.show', $casamento) }}">
+                        <x-button variant="outline" class="flex-1">Cancelar</x-button>
                     </a>
 
                     <x-button type="submit" class="flex-1">
                         Salvar alterações
                     </x-button>
+                </div>
+
+
                 </div>
             </form>
         </x-card-sketch>

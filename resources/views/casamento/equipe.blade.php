@@ -24,7 +24,7 @@
 
         {{-- Membros atuais --}}
         <x-card-sketch class="mb-6">
-            <h2 class="text-primary font-bold text-lg mb-4">Membros atuais</h2>
+            <h2 class="titulo-card">Membros atuais</h2>
 
             <div class="flex flex-col gap-3">
                 @foreach ($membros as $membro)
@@ -67,7 +67,7 @@
                 }
             }
         }">
-            <h2 class="text-primary font-bold text-lg mb-4">Adicionar membro</h2>
+            <h2 class="titulo-card">Adicionar membro</h2>
 
             <form @submit.prevent="buscar" class="flex gap-3 mb-4">
                 <input type="email" x-model="email" placeholder="E-mail cadastrado no SayYes"
@@ -95,7 +95,7 @@
             </div>
 
             {{-- Já é membro --}}
-            <div x-show="jaMembro" x-cloak class="alert-warning">
+            <div x-show="jaMembro" x-cloak class="alert-danger">
                 Este usuário já é membro do casamento.
             </div>
 
