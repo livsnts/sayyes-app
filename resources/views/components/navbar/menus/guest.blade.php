@@ -1,6 +1,6 @@
 {{-- navbar/guest-links.blade.php --}}
 
-<div class="flex gap-20 ">
+<div class="flex flex-col gap-4 md:flex-row md:gap-20">
 
     <a href="/noivos" class="nav-link">
         Para noivos

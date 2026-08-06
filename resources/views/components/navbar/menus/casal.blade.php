@@ -4,7 +4,7 @@
     $casamentoAtivo = auth()->user()->casamentos()->where('statusCasamento', 'ATIVO')->first();
 @endphp
 
-<div class="flex gap-20">
+<div class="flex flex-col gap-4 md:flex-row md:gap-20">
 
     <a href="/inicio" class="nav-link">
         Início
