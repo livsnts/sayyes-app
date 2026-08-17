@@ -78,7 +78,7 @@ class CasamentoController extends Controller
         ]);
 
         $imagemPath = null;
-        if ($request->hasFile('imagemCasamento')) {
+        if ($request->hasFile('imagemCasamento') && $request->file('imagemCasamento')->isValid()) {
             $imagemPath = $request->file('imagemCasamento')->store('casamentos', 'public');
         }
 
@@ -151,7 +151,7 @@ class CasamentoController extends Controller
             'statusCasamento',
         ]);
 
-        if ($request->hasFile('imagemCasamento')) {
+        if ($request->hasFile('imagemCasamento') && $request->file('imagemCasamento')->isValid()) {
             $dados['imagemCasamento'] = $request->file('imagemCasamento')->store('casamentos', 'public');
         }
 
