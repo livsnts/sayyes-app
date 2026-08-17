@@ -5,19 +5,14 @@
 
     <main class="page-main">
 
-        <p class="text-sm text-text-muted mb-6">
-            <a href="{{ route('casamento.show', $casamento) }}" class="text-muted hover:text-primary">Meu casamento</a>
-            &rsaquo; Equipe do evento
-        </p>
-
-        <div class="relative flex items-center justify-center mb-8">
-            <img src="{{ asset('images/doodles/passaros.png') }}" alt="Passaros" class="absolute left-0 w-30">
-            <div class="text-center">
-                <h1 class="titulo mb-0">Equipe do evento</h1>
-                <p class="text-text-muted">
-                    Gerencie quem tem acesso ao <strong class="text-primary">{{ $casamento->nomeCasamento }}</strong>
-                </p>
+        <div class="page-header">
+            <div class="page-header-title-row">
+                <img src="{{ asset('images/doodles/passaros.png') }}" alt="Passaros" class="page-header-doodle">
+                <h1 class="titulo">Equipe do evento</h1>
             </div>
+            <p class="text-text-muted">
+                Gerencie quem tem acesso ao <strong class="text-primary">{{ $casamento->nomeCasamento }}</strong>
+            </p>
         </div>
 
         <x-flash-messages />
@@ -45,33 +40,32 @@
 
         {{-- Adicionar membro --}}
         <div class="card-sketch" x-data="{
-            email: '',
-            resultado: null,
-            jaMembro: false,
-            naoEncontrado: false,
-            carregando: false,
-            async buscar() {
-                this.resultado = null;
-                this.jaMembro = false;
-                this.naoEncontrado = false;
-                this.carregando = true;
-                const res = await fetch('{{ route('casamento.buscar-usuario', $casamento) }}?email=' + encodeURIComponent(this.email));
-                const data = await res.json();
-                this.carregando = false;
-                if (data.ja_membro) {
-                    this.jaMembro = true;
-                } else if (data.encontrado) {
-                    this.resultado = data;
-                } else {
-                    this.naoEncontrado = true;
+                email: '',
+                resultado: null,
+                jaMembro: false,
+                naoEncontrado: false,
+                carregando: false,
+                async buscar() {
+                    this.resultado = null;
+                    this.jaMembro = false;
+                    this.naoEncontrado = false;
+                    this.carregando = true;
+                    const res = await fetch('{{ route('casamento.buscar-usuario', $casamento) }}?email=' + encodeURIComponent(this.email));
+                    const data = await res.json();
+                    this.carregando = false;
+                    if (data.ja_membro) {
+                        this.jaMembro = true;
+                    } else if (data.encontrado) {
+                        this.resultado = data;
+                    } else {
+                        this.naoEncontrado = true;
+                    }
                 }
-            }
-        }">
+            }">
             <h2 class="titulo-card">Adicionar membro</h2>
 
             <form @submit.prevent="buscar" class="flex gap-3 mb-4">
-                <input type="email" x-model="email" placeholder="E-mail cadastrado no SayYes"
-                    class="field-input flex-1">
+                <input type="email" x-model="email" placeholder="E-mail cadastrado no SayYes" class="field-input flex-1">
                 <x-button type="submit" class="px-6 py-3">
                     <span x-show="!carregando">Buscar</span>
                     <span x-show="carregando">Buscando</span>
@@ -79,8 +73,7 @@
             </form>
 
             {{-- Encontrado --}}
-            <div x-show="resultado && resultado.encontrado" x-cloak
-                class="alert-success flex items-center gap-3">
+            <div x-show="resultado && resultado.encontrado" x-cloak class="alert-success flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold shrink-0"
                     x-text="resultado ? resultado.name[0].toUpperCase() : ''"></div>
                 <div>

@@ -82,7 +82,7 @@
 
 
         {{-- Ações rápidas --}}
-        <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-4 gap-4 mb-6">
             <a href="{{ route('casamento.equipe', $casamento) }}">
                 <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
                     <img src="{{ asset('images/doodles/passaros.png') }}" alt="Passaros" class="h-24 object-contain">
@@ -95,10 +95,16 @@
                     <p class="text-primary font-semibold text-sm">Editar casamento</p>
                 </div>
             </a>
-            <a href="{{ route('casamento.edit', $casamento) }}">
+            <a href="{{ route('convidado.create', $casamento) }}">
                 <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
-                    <img src="{{ asset('images/doodles/caneta.png') }}" alt="Caneta" class="h-24 object-contain">
-                    <p class="text-primary font-semibold text-sm">Editar casamento</p>
+                    <img src="{{ asset('images/doodles/convite.png') }}" alt="Convite" class="h-24 object-contain">
+                    <p class="text-primary font-semibold text-sm">Adicionar convidados</p>
+                </div>
+            </a>
+            <a href="{{ route('convidado.index', $casamento) }}">
+                <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
+                    <img src="{{ asset('images/doodles/convite.png') }}" alt="Convite" class="h-24 object-contain">
+                    <p class="text-primary font-semibold text-sm">Lista de convidados</p>
                 </div>
             </a>
         </div>
