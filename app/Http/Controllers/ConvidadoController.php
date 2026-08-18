@@ -17,7 +17,7 @@ class ConvidadoController extends Controller
     {
         $this->authorize('view', $casamento);
 
-        $convidados = $casamento->convidados()->orderBy('nomeConvidado')->get();
+        $convidados = $casamento->convidados()->withCount('acompanhantes')->orderBy('nomeConvidado')->get();
 
         $totalConvidados = $convidados->count();
         $confirmados = $convidados->where('statusConvidado', 'CONFIRMADO')->count();
@@ -38,7 +38,7 @@ class ConvidadoController extends Controller
     {
         $this->authorize('view', $casamento);
 
-        $convidados = $casamento->convidados()->orderBy('nomeConvidado')->get();
+        $convidados = $casamento->convidados()->withCount('acompanhantes')->orderBy('nomeConvidado')->get();
 
         $totalConvidados = $convidados->count();
         $confirmados = $convidados->where('statusConvidado', 'CONFIRMADO')->count();
@@ -81,6 +81,16 @@ class ConvidadoController extends Controller
         return redirect()->route('convidado.create', $casamento)->with('sucesso', 'Convidado adicionado com sucesso!');
     }
 
+    public function destroy(Casamento $casamento, Convidado $convidado)
+    {
+        $this->authorize('view', $casamento);
+        abort_unless($convidado->casamento_id === $casamento->id, 404);
+
+        $convidado->delete();
+
+        return back()->with('sucesso', 'Convidado removido com sucesso!');
+    }
+
     public function importar(Request $request, Casamento $casamento)
     {
         $this->authorize('view', $casamento);
@@ -95,5 +105,19 @@ class ConvidadoController extends Controller
         Excel::import(new ConvidadosImport($casamento), $request->file('planilha'));
 
         return redirect()->route('convidado.create', $casamento)->with('sucesso', 'Convidados importados com sucesso!');
+    }
+
+    public function linkConfirmacaoWhatsapp(): string
+    {
+        $numero = preg_replace('/\D/', '', $this->telefoneConvidado);
+
+        if (strlen($numero) <= 11) {
+            $numero = '55' . $numero;
+        }
+
+        $link = route('convidado.confirmar', $this->tokenConfirmacao);
+        $mensagem = "Olá, {$this->nomeConvidado}! Você foi convidado(a) para o casamento. Confirme sua presença por aqui: {$link}";
+
+        return 'https://wa.me/' . $numero . '?text=' . urlencode($mensagem);
     }
 }
