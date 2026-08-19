@@ -1,11 +1,15 @@
+@props([
+    'flush' => false,
+])
+
 <div {{
     $attributes->merge([
         'class' => '
                 border-3
                 border-primary
-                bg-background
-                p-8
-            '
+                bg-background ' .
+            ($flush ? 'overflow-hidden' : 'p-8')
+
     ])
     }} style="
         border-radius:

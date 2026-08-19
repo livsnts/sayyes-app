@@ -3,7 +3,7 @@
 @section('content')
     <x-navbar />
 
-    <main class="page-main">
+    <main class="page-main-wide">
 
         <x-flash-messages />
 
@@ -23,19 +23,23 @@
                 <p class="card-resumo-label">Cadastrados</p>
             </div>
             <div class="card-resumo">
-                <p class="card-resumo-value text-success">{{ $confirmados }}</p>
+                <p class="text-3xl font-bold text-success">{{ $confirmados }}</p>
                 <p class="card-resumo-label">Confirmados</p>
             </div>
             <div class="card-resumo">
-                <p class="card-resumo-value text-warning">{{ $pendentes }}</p>
+                <p class="text-3xl font-bold text-warning">{{ $pendentes }}</p>
                 <p class="card-resumo-label">Pendentes</p>
             </div>
             <div class="card-resumo">
-                <p class="card-resumo-value text-danger">{{ $recusados }}</p>
+                <p class="text-3xl font-bold text-danger">{{ $recusados }}</p>
                 <p class="card-resumo-label">Recusados</p>
             </div>
         </div>
 
-    </main>
+        {{-- Painel de cadastro --}}
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            
+        </div>
 
+    </main>
 @endsection
