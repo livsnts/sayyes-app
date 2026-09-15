@@ -126,4 +126,76 @@ class ConvidadoController extends Controller
 
         return redirect()->route('convidado.create', $casamento)->with('sucesso', 'Convidados importados com sucesso!');
     }
+
+    public function edit(Casamento $casamento, Convidado $convidado)
+    {
+        $this->authorize('view', $casamento);
+
+        return view('convidados.edit', compact('casamento', 'convidado'));
+    }
+
+    public function update(Request $request, Casamento $casamento, Convidado $convidado)
+    {
+        $this->authorize('view', $casamento);
+
+        $request->validate([
+            'nomeConvidado' => ['required', 'string', 'max:255'],
+            'telefoneConvidado' => ['nullable', 'string'],
+            'statusConvidado' => ['required', 'in:PENDENTE,CONFIRMADO,RECUSADO'],
+            'quantidadeMaxAcompanhantes' => ['required', 'integer', 'min:0'],
+            'alergiasConvidado' => ['nullable', 'string'],
+            'observacoesConfirmacao' => ['nullable', 'string'],
+        ], [
+            'nomeConvidado.required' => 'O nome do convidado é obrigatório.',
+            'statusConvidado.required' => 'O status é obrigatório.',
+            'statusConvidado.in' => 'Status inválido.',
+            'quantidadeMaxAcompanhantes.required' => 'Informe o número de acompanhantes.',
+            'quantidadeMaxAcompanhantes.integer' => 'O número de acompanhantes deve ser inteiro.',
+            'quantidadeMaxAcompanhantes.min' => 'O número de acompanhantes não pode ser negativo.',
+        ]);
+
+        $convidado->update($request->only([
+            'nomeConvidado',
+            'telefoneConvidado',
+            'statusConvidado',
+            'quantidadeMaxAcompanhantes',
+            'alergiasConvidado',
+            'observacoesConfirmacao',
+        ]));
+
+        return redirect()->route('convidado.index', $casamento)->with('sucesso', 'Convidado atualizado com sucesso!');
+    }
+
+    // Confirmação
+    public function confirmar(string $token)
+    {
+        $convidado = Convidado::where('tokenConfirmacao', $token)->firstOrFail();
+
+        return view('convidados.confirmar', compact('convidado'));
+    }
+
+    public function salvarConfirmacao(Request $request, string $token)
+    {
+        $convidado = Convidado::where('tokenConfirmacao', $token)->firstOrFail();
+
+        $request->validate([
+            'statusConvidado' => ['required', 'in:CONFIRMADO,RECUSADO'],
+            'observacoesConfirmacao' => ['nullable', 'string'],
+            'alergiasConvidado' => ['nullable', 'string'],
+        ]);
+
+        $convidado->update([
+            'statusConvidado' => $request->statusConvidado,
+            'observacoesConfirmacao' => $request->observacoesConfirmacao,
+            'alergiasConvidado' => $request->alergiasConvidado,
+            'dataConfirmacao' => now(),
+        ]);
+
+        return back()->with(
+            'sucesso',
+            $request->statusConvidado === 'CONFIRMADO'
+            ? 'Presença confirmada. Nos vemos no grande dia!'
+            : 'Resposta registrada. Obrigado por avisar!'
+        );
+    }
 }

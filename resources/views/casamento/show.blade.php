@@ -44,7 +44,7 @@
 
         {{-- Info rápida --}}
         <x-card-sketch class="mb-6">
-            <div class="grid grid-cols-3 divide-x divide-primary/20">
+            <div class="grid grid-cols-1 divide-y sm:grid-cols-3 sm:divide-y-0 sm:divide-x divide-primary/20">
                 <div class="flex flex-col items-center gap-1 py-2 px-2 text-center">
                     <i class="fa-regular fa-calendar text-primary"></i>
                     <p class="text-xs text-text-muted">Data</p>
@@ -82,16 +82,16 @@
 
 
         {{-- Ações rápidas --}}
-        <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
             <a href="{{ route('casamento.equipe', $casamento) }}">
                 <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
-                    <img src="{{ asset('images/doodles/passaros.png') }}" alt="Passaros" class="h-24 object-contain">
+                    <img src="{{ asset('images/doodles/passaros.png') }}" alt="Passaros" class="h-16 sm:h-24 object-contain">
                     <p class="text-primary font-semibold text-sm">Equipe do evento</p>
                 </div>
             </a>
             <a href="{{ route('casamento.edit', $casamento) }}">
                 <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
-                    <img src="{{ asset('images/doodles/caneta.png') }}" alt="Caneta" class="h-24 object-contain">
+                    <img src="{{ asset('images/doodles/caneta.png') }}" alt="Caneta" class="h-16 sm:h-24 object-contain">
                     <p class="text-primary font-semibold text-sm">Editar casamento</p>
                 </div>
             </a>

@@ -24,10 +24,10 @@ class Convidado extends Model
 {
     use HasFactory;
 
-    protected static function booted(): void 
+    protected static function booted(): void
     {
         static::creating(function (Convidado $convidado) {
-            if(empty($convidado->tokenConfirmacao)){
+            if (empty($convidado->tokenConfirmacao)) {
                 $convidado->tokenConfirmacao = (string) Str::uuid();
             }
         });

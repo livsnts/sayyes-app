@@ -12,29 +12,27 @@
 
                 <x-input label="Buscar por nome" name="nome" :value="request('nome')" placeholder="Ex.: Casamento G&L" />
 
-                <div class="flex gap-4">
+                <div class="flex flex-col gap-4 sm:flex-row">
                     <div class="flex flex-col gap-2 flex-1">
                         <label class="text-primary pt-2 mb-0">Status</label>
-                        <select name="status" class="w-full mt-0 mb-1 px-4 py-4 rounded-lg border-2 border-primary bg-transparent outline-none transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-gray-100 disabled:cursor-not-allowed">
+                        <select name="status"
+                            class="w-full mt-0 mb-1 px-4 py-4 rounded-lg border-2 border-primary bg-transparent outline-none transition-all duration-200 focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-gray-100 disabled:cursor-not-allowed">
                             <option value="">Todos</option>
                             <option value="ATIVO" {{ request('status') === 'ATIVO' ? 'selected' : '' }}>Ativo</option>
                             <option value="REALIZADO" {{ request('status') === 'REALIZADO' ? 'selected' : '' }}>Realizado
                             </option>
                             <option value="CANCELADO" {{ request('status') === 'CANCELADO' ? 'selected' : '' }}>Cancelado
-                            </option>                            
+                            </option>
                         </select>
                     </div>
 
-                    <div class="flex gap-4">
-                        <x-input label="De" name="data_de" type="date" :value="request('data_de')" class="flex-1" />
-                        <x-input label="Até" name="data_ate" type="date" :value="request('data_ate')" class="flex-1" />
-                    </div>
+                    <x-input label="De" name="data_de" type="date" :value="request('data_de')" class="flex-1" />
+                    <x-input label="Até" name="data_ate" type="date" :value="request('data_ate')" class="flex-1" />
                 </div>
 
                 <div class="flex gap-3">
                     <x-button type="submit" class="flex-1">Filtrar</x-button>
-                    <x-button type="link" href="{{ route('casamento.index') }}"
-                        variant="outline" class="flex-1">
+                    <x-button type="link" href="{{ route('casamento.index') }}" variant="outline" class="flex-1">
                         Limpar
                     </x-button>
                 </div>
@@ -72,12 +70,12 @@
                                 </div>
 
                                 <span class="text-xs font-semibold px-3 py-1 rounded-full
-                                                @if ($casamento->statusCasamento === 'ATIVO') bg-success/10 text-success
-                                                @elseif ($casamento->statusCasamento === 'REALIZADO') bg-primary/10 text-primary
-                                                @elseif ($casamento->statusCasamento === 'CANCELADO') bg-danger/10 text-danger
-                                                @else bg-warning/10 text-warning
-                                                @endif
-                                            ">
+                                                            @if ($casamento->statusCasamento === 'ATIVO') bg-success/10 text-success
+                                                            @elseif ($casamento->statusCasamento === 'REALIZADO') bg-primary/10 text-primary
+                                                            @elseif ($casamento->statusCasamento === 'CANCELADO') bg-danger/10 text-danger
+                                                            @else bg-warning/10 text-warning
+                                                            @endif
+                                                        ">
                                     {{ ucfirst(strtolower($casamento->statusCasamento)) }}
                                 </span>
 
