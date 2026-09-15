@@ -8,6 +8,7 @@ use App\Models\Convidado;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ModeloConvidadosExport;
 
 class ConvidadoController extends Controller
 {
@@ -20,7 +21,11 @@ class ConvidadoController extends Controller
         $convidados = $casamento->convidados()->withCount('acompanhantes')->orderBy('nomeConvidado')->get();
 
         $totalConvidados = $convidados->count();
+        $capacidadeMaxima = $convidados->sum(fn ($convidado) => 1 + $convidado->quantidadeMaxAcompanhantes);
         $confirmados = $convidados->where('statusConvidado', 'CONFIRMADO')->count();
+        $totalPessoasConfirmadas = $convidados
+            ->where('statusConvidado', 'CONFIRMADO')
+            ->sum(fn($convidado) => 1 + $convidado->acompanhantes_count);
         $pendentes = $convidados->where('statusConvidado', 'PENDENTE')->count();
         $recusados = $convidados->where('statusConvidado', 'RECUSADO')->count();
 
@@ -28,7 +33,9 @@ class ConvidadoController extends Controller
             'casamento',
             'convidados',
             'totalConvidados',
+            'capacidadeMaxima',
             'confirmados',
+            'totalPessoasConfirmadas',
             'pendentes',
             'recusados'
         ));
@@ -38,10 +45,14 @@ class ConvidadoController extends Controller
     {
         $this->authorize('view', $casamento);
 
-        $convidados = $casamento->convidados()->withCount('acompanhantes')->orderBy('nomeConvidado')->get();
+        $convidados = $casamento->convidados()->withCount('acompanhantes')->latest()->get();
 
         $totalConvidados = $convidados->count();
+        $capacidadeMaxima = $convidados->sum(fn ($convidado) => 1 + $convidado->quantidadeMaxAcompanhantes);
         $confirmados = $convidados->where('statusConvidado', 'CONFIRMADO')->count();
+        $totalPessoasConfirmadas = $convidados
+            ->where('statusConvidado', 'CONFIRMADO')
+            ->sum(fn($convidado) => 1 + $convidado->acompanhantes_count);
         $pendentes = $convidados->where('statusConvidado', 'PENDENTE')->count();
         $recusados = $convidados->where('statusConvidado', 'RECUSADO')->count();
 
@@ -49,7 +60,9 @@ class ConvidadoController extends Controller
             'casamento',
             'convidados',
             'totalConvidados',
+            'capacidadeMaxima',
             'confirmados',
+            'totalPessoasConfirmadas',
             'pendentes',
             'recusados'
         ));
@@ -91,6 +104,13 @@ class ConvidadoController extends Controller
         return back()->with('sucesso', 'Convidado removido com sucesso!');
     }
 
+    public function modelo(Casamento $casamento)
+    {
+        $this->authorize('view', $casamento);
+
+        return Excel::download(new ModeloConvidadosExport, 'modelo-convidados.xlsx');
+    }
+
     public function importar(Request $request, Casamento $casamento)
     {
         $this->authorize('view', $casamento);
@@ -105,19 +125,5 @@ class ConvidadoController extends Controller
         Excel::import(new ConvidadosImport($casamento), $request->file('planilha'));
 
         return redirect()->route('convidado.create', $casamento)->with('sucesso', 'Convidados importados com sucesso!');
-    }
-
-    public function linkConfirmacaoWhatsapp(): string
-    {
-        $numero = preg_replace('/\D/', '', $this->telefoneConvidado);
-
-        if (strlen($numero) <= 11) {
-            $numero = '55' . $numero;
-        }
-
-        $link = route('convidado.confirmar', $this->tokenConfirmacao);
-        $mensagem = "Olá, {$this->nomeConvidado}! Você foi convidado(a) para o casamento. Confirme sua presença por aqui: {$link}";
-
-        return 'https://wa.me/' . $numero . '?text=' . urlencode($mensagem);
     }
 }

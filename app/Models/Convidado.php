@@ -49,4 +49,18 @@ class Convidado extends Model
     {
         return $this->hasMany(Acompanhante::class);
     }
+
+    public function linkConfirmacaoWhatsapp(string $nomeCasamento): string
+{
+    $numero = preg_replace('/\D/', '', $this->telefoneConvidado);
+
+    if (strlen($numero) <= 11) {
+        $numero = '55' . $numero;
+    }
+
+    $link = route('convidado.confirmar', $this->tokenConfirmacao);
+    $mensagem = "Olá, {$this->nomeConvidado}! Você foi convidado(a) para o {$nomeCasamento}. Confirme sua presença por aqui: {$link}";
+
+    return 'https://wa.me/' . $numero . '?text=' . urlencode($mensagem);
+}
 }

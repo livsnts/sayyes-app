@@ -60,6 +60,34 @@ body {
     text-align: center;
 }
 
+.scroll-custom {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--color-background);
+}
+
+.scroll-custom::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scroll-custom::-webkit-scrollbar-track {
+    background: var(--color-background);
+}
+
+.scroll-custom::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+    border-radius: 999px;
+}
+
+.scroll-custom::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.scroll-custom thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
 .card-sketch {
     position: relative;
 
@@ -298,7 +326,7 @@ body {
     text-align: center;
 }
 
-.card-resumo {
+.card-resumo-valor {
     font-size: 1.875rem;
     font-weight: 700;
 }

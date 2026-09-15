@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/casamentos/{casamento}/convidados/criar', [ConvidadoController::class, 'create'])->name('convidado.create');
     Route::post('/casamentos/{casamento}/convidados', [ConvidadoController::class, 'store'])->name('convidado.store');
     Route::post('/casamentos/{casamento}/convidados/importar', [ConvidadoController::class, 'importar'])->name('convidado.importar');
+    Route::get('/casamentos/{casamento}/convidados/modelo', [ConvidadoController::class, 'modelo'])->name('convidado.modelo');
     Route::get('/casamentos/{casamento}/convidados/{convidado}/editar', [ConvidadoController::class, 'edit'])->name('convidado.edit');
     Route::put('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'update'])->name('convidado.update');
     Route::delete('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'destroy'])->name('convidado.destroy');
