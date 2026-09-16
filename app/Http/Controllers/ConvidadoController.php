@@ -14,32 +14,44 @@ class ConvidadoController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index(Casamento $casamento)
+    public function index(Casamento $casamento, Request $request)
     {
         $this->authorize('view', $casamento);
 
-        $convidados = $casamento->convidados()->withCount('acompanhantes')->orderBy('nomeConvidado')->get();
+        $query = $casamento->convidados()->withCount('acompanhantes')->with('acompanhantes');
 
-        $totalConvidados = $convidados->count();
-        $capacidadeMaxima = $convidados->sum(fn ($convidado) => 1 + $convidado->quantidadeMaxAcompanhantes);
-        $confirmados = $convidados->where('statusConvidado', 'CONFIRMADO')->count();
-        $totalPessoasConfirmadas = $convidados
-            ->where('statusConvidado', 'CONFIRMADO')
-            ->sum(fn($convidado) => 1 + $convidado->acompanhantes_count);
-        $pendentes = $convidados->where('statusConvidado', 'PENDENTE')->count();
-        $recusados = $convidados->where('statusConvidado', 'RECUSADO')->count();
+        if ($request->filled('status')) {
+            $query->where('statusConvidado', $request->status);
+        }
 
-        return view('convidados.index', compact(
-            'casamento',
-            'convidados',
-            'totalConvidados',
-            'capacidadeMaxima',
-            'confirmados',
-            'totalPessoasConfirmadas',
-            'pendentes',
-            'recusados'
+        if ($request->filled('busca')) {
+            $query->where('nomeConvidado', 'like', '%' . $request->busca . '%');
+        }
+
+        $convidadosFiltrados = $query->orderBy('nomeConvidado')->get();
+
+        $todosConvidados = $casamento->convidados()->withCount('acompanhantes')->get();
+        $estatisticas = $this->estatisticasConvidados($todosConvidados);
+
+        return view('convidados.index', array_merge(
+            compact('casamento', 'convidadosFiltrados'),
+            $estatisticas
         ));
     }
+
+    private function estatisticasConvidados($convidados): array
+{
+    return [
+        'totalConvidados' => $convidados->count(),
+        'capacidadeMaxima' => $convidados->sum(fn ($c) => 1 + $c->quantidadeMaxAcompanhantes),
+        'confirmados' => $convidados->where('statusConvidado', 'CONFIRMADO')->count(),
+        'totalPessoasConfirmadas' => $convidados
+            ->where('statusConvidado', 'CONFIRMADO')
+            ->sum(fn ($c) => 1 + $c->acompanhantes_count),
+        'pendentes' => $convidados->where('statusConvidado', 'PENDENTE')->count(),
+        'recusados' => $convidados->where('statusConvidado', 'RECUSADO')->count(),
+    ];
+}
 
     public function create(Casamento $casamento)
     {
@@ -47,24 +59,12 @@ class ConvidadoController extends Controller
 
         $convidados = $casamento->convidados()->withCount('acompanhantes')->latest()->get();
 
-        $totalConvidados = $convidados->count();
-        $capacidadeMaxima = $convidados->sum(fn ($convidado) => 1 + $convidado->quantidadeMaxAcompanhantes);
-        $confirmados = $convidados->where('statusConvidado', 'CONFIRMADO')->count();
-        $totalPessoasConfirmadas = $convidados
-            ->where('statusConvidado', 'CONFIRMADO')
-            ->sum(fn($convidado) => 1 + $convidado->acompanhantes_count);
-        $pendentes = $convidados->where('statusConvidado', 'PENDENTE')->count();
-        $recusados = $convidados->where('statusConvidado', 'RECUSADO')->count();
+        $todosConvidados = $casamento->convidados()->withCount('acompanhantes')->get();
+        $estatisticas = $this->estatisticasConvidados($todosConvidados);
 
-        return view('convidados.create', compact(
-            'casamento',
-            'convidados',
-            'totalConvidados',
-            'capacidadeMaxima',
-            'confirmados',
-            'totalPessoasConfirmadas',
-            'pendentes',
-            'recusados'
+        return view('convidados.create', array_merge(
+            compact('casamento', 'convidados'),
+            $estatisticas
         ));
     }
 

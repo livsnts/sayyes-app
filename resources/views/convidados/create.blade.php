@@ -9,7 +9,7 @@
 
         <div class="page-header">
             <div class="page-header-title-row">
-                <img src="{{ asset('images/doodles/convite.png') }}" alt="Convite" class="page-header-doodle">
+                <img src="{{ asset('images/doodles/envelope.png') }}" alt="Convite" class="page-header-doodle">
                 <h1 class="titulo">Adicionar Convidado</h1>
             </div>
             <p class="text-text-muted">
@@ -45,10 +45,9 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-
             {{-- Formulário: manual ou importar --}}
             <div class="border-2 border-primary rounded-2xl overflow-hidden">
-                <div class="bg-primary text-white px-6 py-4 flex items-center gap-3">
+                <div class="bg-primary text-white px-6 py-3 flex items-center gap-3">
                     <i class="fa-solid fa-plus"></i>
                     <h2 class="font-bold text-lg">Adicionar Convidado</h2>
                 </div>
@@ -153,7 +152,7 @@
 
             <div class="border-2 border-primary rounded-2xl overflow-hidden bg-background">
                 <table class="w-full text-sm block">
-                    {{-- Cabeçalho fixo no topo, fora do scroll --}}
+                    {{-- Cabeçalho fixo no topo --}}
                     <thead class="bg-primary text-white block">
                         <tr class="flex w-full">
                             <th class="px-4 py-3 text-left w-3/12">Nome</th>
@@ -164,8 +163,8 @@
                         </tr>
                     </thead>
 
-                    {{-- Scroll vertical aplicado EXCLUSIVAMENTE ao tbody --}}
-                    <tbody class="block overflow-y-auto max-h-[25rem] scroll-custom">
+                    {{-- Scroll vertical --}}
+                    <tbody class="block overflow-y-auto max-h-[40rem] scroll-custom">
                         @forelse ($convidados as $convidado)
                             <tr class="flex w-full items-center border-t border-primary/20">
                                 <td class="px-4 py-3 font-semibold text-primary w-3/12 truncate">{{ $convidado->nomeConvidado }}
