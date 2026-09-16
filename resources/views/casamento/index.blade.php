@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <x-navbar />
 
     <main class="page-main">
         <h1 class="titulo">Meus Casamentos</h1>

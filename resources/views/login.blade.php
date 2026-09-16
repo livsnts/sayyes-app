@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <x-navbar />
 
     <main>
         <div class="flex justify-center py-12">

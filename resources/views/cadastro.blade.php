@@ -2,8 +2,6 @@
 
 @section('content')
 
-    <x-navbar />
-
     <main>
         <div class="flex justify-center py-12">
             <x-card-sketch class="w-full max-w-2xl">

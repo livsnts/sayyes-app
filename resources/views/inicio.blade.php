@@ -2,8 +2,6 @@
 
 @section('content')
 
-<x-navbar />
-
 <section
     class="
         max-w-7xl

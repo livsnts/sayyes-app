@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <x-navbar />
-
     <main class="page-main">
 
         <x-flash-messages />
