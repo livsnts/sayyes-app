@@ -69,7 +69,7 @@
 
                     {{-- Manual --}}
                     <form method="POST" action="{{ route('convidado.store', $casamento) }}" x-show="aba === 'manual'"
-                        x-cloak x-data="{ qtd: {{ old('quantidadeMaxAcompanhantes', 1) }} }">
+                        x-cloak x-data="{ acompanhantes: @js(old('acompanhantes', [])) }">
                         @csrf
 
                         <x-input label="Nome do convidado*" name="nomeConvidado" required
@@ -78,22 +78,38 @@
                         <x-input label="Telefone / Whatsapp" name="telefoneConvidado" x-data x-mask="(99) 99999-9999"
                             inputmode="numeric" placeholder="(11) 94002-8922" />
 
-                        <div class="flex flex-col gap-2 mt-4">
-                            <label class="text-primary">Quant. máx. de acompanhantes</label>
-                            <div class="flex items-center gap-3">
-                                <button type="button" @click="qtd = Math.max(0, qtd - 1)"
-                                    class="w-10 h-10 rounded-lg border-2 border-primary text-primary font-bold cursor-pointer">
-                                    &minus;
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between">
+                                <label class="text-primary">Acompanhantes</label>
+                                <button type="button" @click="acompanhantes.push({ nome: '', idade: '' })"
+                                    class="text-sm font-semibold text-primary flex items-center gap-1 cursor-pointer">
+                                    <i class="fa-solid fa-plus"></i> Adicionar acompanhante
                                 </button>
-                                <span class="w-8 text-center font-bold text-lg text-primary" x-text="qtd"></span>
-                                <button type="button" @click="qtd++"
-                                    class="w-10 h-10 rounded-lg border-2 border-primary text-primary font-bold cursor-pointer">
-                                    +
-                                </button>
-                                <input type="hidden" name="quantidadeMaxAcompanhantes" :value="qtd">
-                                <span class="text-text-muted text-sm">adultos</span>
                             </div>
-                            @error('quantidadeMaxAcompanhantes')
+
+                            <template x-for="(acompanhante, indice) in acompanhantes" :key="indice">
+                                <div class="flex gap-2 items-start mt-3 border border-primary/20 rounded-lg p-3">
+                                    <div class="flex-1">
+                                        <input type="text" :name="`acompanhantes[${indice}][nome]`"
+                                            x-model="acompanhante.nome" placeholder="Nome do acompanhante"
+                                            class="field-input w-full">
+                                    </div>
+                                    <div class="w-24 shrink-0">
+                                        <input type="number" min="0" :name="`acompanhantes[${indice}][idade]`"
+                                            x-model="acompanhante.idade" placeholder="Idade" class="field-input w-full">
+                                    </div>
+                                    <button type="button" @click="acompanhantes.splice(indice, 1)"
+                                        class="w-10 h-12 shrink-0 flex items-center justify-center rounded-lg text-primary cursor-pointer">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </template>
+
+                            <p class="text-text-muted text-sm mt-2" x-show="acompanhantes.length === 0">
+                                Nenhum acompanhante adicionado.
+                            </p>
+
+                            @error('acompanhantes.*.nome')
                                 <span class="text-danger text-sm">{{ $message }}</span>
                             @enderror
                         </div>
@@ -156,8 +172,8 @@
                         <tr class="flex w-full">
                             <th class="px-4 py-3 text-left w-3/12">Nome</th>
                             <th class="px-4 py-3 text-left w-2/12">Status</th>
-                            <th class="px-4 py-3 text-left w-3/12">Telefone</th>
-                            <th class="px-4 py-3 text-left w-2/12">Acomp.</th>
+                            <th class="px-4 py-3 text-left w-4/12">Telefone</th>
+                            <th class="px-4 py-3 text-left w-1/12">Acomp.</th>
                             <th class="px-4 py-3 text-left w-2/12">Ações</th>
                         </tr>
                     </thead>
@@ -170,17 +186,17 @@
                                 </td>
                                 <td class="px-4 py-3 w-2/12">
                                     <span class="font-semibold
-                                    @if ($convidado->statusConvidado === 'CONFIRMADO') text-success
-                                    @elseif ($convidado->statusConvidado === 'RECUSADO') text-danger
-                                    @else text-warning
-                                    @endif
-                                ">
+                                                    @if ($convidado->statusConvidado === 'CONFIRMADO') text-success
+                                                    @elseif ($convidado->statusConvidado === 'RECUSADO') text-danger
+                                                    @else text-warning
+                                                    @endif
+                                                ">
                                         {{ ucfirst(strtolower($convidado->statusConvidado)) }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-primary w-3/12">{{ $convidado->telefoneConvidado ?? '—' }}</td>
-                                <td class="px-4 py-3 text-primary w-2/12">
-                                    {{ $convidado->acompanhantes_count }}/{{ $convidado->quantidadeMaxAcompanhantes }}
+                                <td class="px-4 py-3 text-primary w-4/12">{{ $convidado->telefoneConvidado ?? '—' }}</td>
+                                <td class="px-4 py-3 text-primary w-1/12">
+                                     {{ $convidado->acompanhantes_count }}
                                 </td>
                                 <td class="px-4 py-3 w-2/12">
                                     <div class="flex gap-2">

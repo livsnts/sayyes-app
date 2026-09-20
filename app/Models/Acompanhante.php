@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'convidado_id',
     'nomeAcompanhante',
+    'idadeAcompanhante',
     'alergiasAcompanhante',
 ])]
 class Acompanhante extends Model

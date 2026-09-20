@@ -40,18 +40,18 @@ class ConvidadoController extends Controller
     }
 
     private function estatisticasConvidados($convidados): array
-{
-    return [
-        'totalConvidados' => $convidados->count(),
-        'capacidadeMaxima' => $convidados->sum(fn ($c) => 1 + $c->quantidadeMaxAcompanhantes),
-        'confirmados' => $convidados->where('statusConvidado', 'CONFIRMADO')->count(),
-        'totalPessoasConfirmadas' => $convidados
-            ->where('statusConvidado', 'CONFIRMADO')
-            ->sum(fn ($c) => 1 + $c->acompanhantes_count),
-        'pendentes' => $convidados->where('statusConvidado', 'PENDENTE')->count(),
-        'recusados' => $convidados->where('statusConvidado', 'RECUSADO')->count(),
-    ];
-}
+    {
+        return [
+            'totalConvidados' => $convidados->count(),
+            'capacidadeMaxima' => $convidados->sum(fn($c) => 1 + $c->quantidadeMaxAcompanhantes),
+            'confirmados' => $convidados->where('statusConvidado', 'CONFIRMADO')->count(),
+            'totalPessoasConfirmadas' => $convidados
+                ->where('statusConvidado', 'CONFIRMADO')
+                ->sum(fn($c) => 1 + $c->acompanhantes_count),
+            'pendentes' => $convidados->where('statusConvidado', 'PENDENTE')->count(),
+            'recusados' => $convidados->where('statusConvidado', 'RECUSADO')->count(),
+        ];
+    }
 
     public function create(Casamento $casamento)
     {
@@ -75,21 +75,31 @@ class ConvidadoController extends Controller
         $request->validate([
             'nomeConvidado' => ['required', 'string', 'max:255'],
             'telefoneConvidado' => ['nullable', 'string'],
-            'quantidadeMaxAcompanhantes' => ['required', 'integer', 'min:0'],
             'alergiasConvidado' => ['nullable', 'string'],
+            'acompanhantes' => ['nullable', 'array'],
+            'acompanhantes.*.nome' => ['required', 'string', 'max:255'],
+            'acompanhantes.*.idade' => ['nullable', 'integer', 'min:0'],
         ], [
             'nomeConvidado.required' => 'O nome do convidado é obrigatório.',
-            'quantidadeMaxAcompanhantes.required' => 'Informe o número de acompanhantes (0 se não houver).',
-            'quantidadeMaxAcompanhantes.integer' => 'O número de acompanhantes deve ser inteiro.',
-            'quantidadeMaxAcompanhantes.min' => 'O número de acompanhantes não pode ser negativo.',
+            'acompanhantes.*.nome.required' => 'Informe o nome de todos os acompanhantes adicionados.',
+            'acompanhantes.*.idade.integer' => 'A idade deve ser um número.',
         ]);
 
-        $casamento->convidados()->create($request->only([
-            'nomeConvidado',
-            'telefoneConvidado',
-            'quantidadeMaxAcompanhantes',
-            'alergiasConvidado',
-        ]));
+        $acompanhantes = $request->input('acompanhantes', []);
+
+        $convidado = $casamento->convidados()->create([
+            'nomeConvidado' => $request->nomeConvidado,
+            'telefoneConvidado' => $request->telefoneConvidado,
+            'alergiasConvidado' => $request->alergiasConvidado,
+            'quantidadeMaxAcompanhantes' => count($acompanhantes),
+        ]);
+
+        foreach ($acompanhantes as $acompanhante) {
+            $convidado->acompanhantes()->create([
+                'nomeAcompanhante' => $acompanhante['nome'],
+                'idadeAcompanhante' => $acompanhante['idade'] ?? null,
+            ]);
+        }
 
         return redirect()->route('convidado.create', $casamento)->with('sucesso', 'Convidado adicionado com sucesso!');
     }
@@ -142,26 +152,38 @@ class ConvidadoController extends Controller
             'nomeConvidado' => ['required', 'string', 'max:255'],
             'telefoneConvidado' => ['nullable', 'string'],
             'statusConvidado' => ['required', 'in:PENDENTE,CONFIRMADO,RECUSADO'],
-            'quantidadeMaxAcompanhantes' => ['required', 'integer', 'min:0'],
             'alergiasConvidado' => ['nullable', 'string'],
             'observacoesConfirmacao' => ['nullable', 'string'],
+            'acompanhantes' => ['nullable', 'array'],
+            'acompanhantes.*.nome' => ['required', 'string', 'max:255'],
+            'acompanhantes.*.idade' => ['nullable', 'integer', 'min:0'],
         ], [
             'nomeConvidado.required' => 'O nome do convidado é obrigatório.',
             'statusConvidado.required' => 'O status é obrigatório.',
             'statusConvidado.in' => 'Status inválido.',
-            'quantidadeMaxAcompanhantes.required' => 'Informe o número de acompanhantes.',
-            'quantidadeMaxAcompanhantes.integer' => 'O número de acompanhantes deve ser inteiro.',
-            'quantidadeMaxAcompanhantes.min' => 'O número de acompanhantes não pode ser negativo.',
+            'acompanhantes.*.nome.required' => 'Informe o nome de todos os acompanhantes adicionados.',
+            'acompanhantes.*.idade.integer' => 'A idade deve ser um número.',
         ]);
 
-        $convidado->update($request->only([
-            'nomeConvidado',
-            'telefoneConvidado',
-            'statusConvidado',
-            'quantidadeMaxAcompanhantes',
-            'alergiasConvidado',
-            'observacoesConfirmacao',
-        ]));
+        $acompanhantes = $request->input('acompanhantes', []);
+
+        $convidado->update([
+            'nomeConvidado' => $request->nomeConvidado,
+            'telefoneConvidado' => $request->telefoneConvidado,
+            'statusConvidado' => $request->statusConvidado,
+            'alergiasConvidado' => $request->alergiasConvidado,
+            'observacoesConfirmacao' => $request->observacoesConfirmacao,
+            'quantidadeMaxAcompanhantes' => count($acompanhantes),
+        ]);
+
+        $convidado->acompanhantes()->delete();
+
+        foreach ($acompanhantes as $acompanhante) {
+            $convidado->acompanhantes()->create([
+                'nomeAcompanhante' => $acompanhante['nome'],
+                'idadeAcompanhante' => $acompanhante['idade'] ?? null,
+            ]);
+        }
 
         return redirect()->route('convidado.index', $casamento)->with('sucesso', 'Convidado atualizado com sucesso!');
     }
