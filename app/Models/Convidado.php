@@ -51,16 +51,16 @@ class Convidado extends Model
     }
 
     public function linkConfirmacaoWhatsapp(string $nomeCasamento): string
-{
-    $numero = preg_replace('/\D/', '', $this->telefoneConvidado);
+    {
+        $numero = preg_replace('/\D/', '', $this->telefoneConvidado);
 
-    if (strlen($numero) <= 11) {
-        $numero = '55' . $numero;
+        if (strlen($numero) <= 11) {
+            $numero = '55' . $numero;
+        }
+
+        $link = route('convidado.confirmar', $this->tokenConfirmacao);
+        $mensagem = "Olá, {$this->nomeConvidado}! Você foi convidado(a) para o {$nomeCasamento}. Confirme sua presença por aqui: {$link}";
+
+        return 'https://wa.me/' . $numero . '?text=' . urlencode($mensagem);
     }
-
-    $link = route('convidado.confirmar', $this->tokenConfirmacao);
-    $mensagem = "Olá, {$this->nomeConvidado}! Você foi convidado(a) para o {$nomeCasamento}. Confirme sua presença por aqui: {$link}";
-
-    return 'https://wa.me/' . $numero . '?text=' . urlencode($mensagem);
-}
 }

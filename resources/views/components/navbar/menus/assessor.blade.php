@@ -9,4 +9,8 @@
         Eventos
     </a>
 
+    <a href="{{ route('fornecedor-confianca.index') }}" class="nav-link">
+        Fornecedores
+    </a>
+
 </div>

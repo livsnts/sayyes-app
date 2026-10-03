@@ -4,8 +4,6 @@
 
     <main class="page-main-wide">
 
-        <x-flash-messages />
-
         <div class="page-header">
             <div class="page-header-title-row">
                 <img src="{{ asset('images/doodles/envelope.png') }}" alt="Convite" class="page-header-doodle">
@@ -170,11 +168,11 @@
                     {{-- Cabeçalho fixo no topo --}}
                     <thead class="bg-primary text-white block">
                         <tr class="flex w-full">
-                            <th class="px-4 py-3 text-left w-3/12">Nome</th>
-                            <th class="px-4 py-3 text-left w-2/12">Status</th>
-                            <th class="px-4 py-3 text-left w-4/12">Telefone</th>
-                            <th class="px-4 py-3 text-left w-1/12">Acomp.</th>
-                            <th class="px-4 py-3 text-left w-2/12">Ações</th>
+                            <th class="itens-tabela text-left w-3/12">Nome</th>
+                            <th class="itens-tabela text-left w-2/12">Status</th>
+                            <th class="itens-tabela text-left w-3/12">Telefone</th>
+                            <th class="itens-tabela text-left w-2/12">Acomp.</th>
+                            <th class="itens-tabela text-center w-2/12">Ações</th>
                         </tr>
                     </thead>
 
@@ -182,37 +180,21 @@
                     <tbody class="block overflow-y-auto max-h-[40rem] scroll-custom">
                         @forelse ($convidados as $convidado)
                             <tr class="flex w-full items-center border-t border-primary/20">
-                                <td class="px-4 py-3 font-semibold text-primary w-3/12 truncate">{{ $convidado->nomeConvidado }}
+                                <td class="itens-tabela font-semibold text-primary w-3/12 truncate">
+                                    {{ $convidado->nomeConvidado }}</td>
+                                <td class="itens-tabela w-2/12">
+                                    <x-convidado-status :status="$convidado->statusConvidado" />
                                 </td>
-                                <td class="px-4 py-3 w-2/12">
-                                    <span class="font-semibold
-                                                    @if ($convidado->statusConvidado === 'CONFIRMADO') text-success
-                                                    @elseif ($convidado->statusConvidado === 'RECUSADO') text-danger
-                                                    @else text-warning
-                                                    @endif
-                                                ">
-                                        {{ ucfirst(strtolower($convidado->statusConvidado)) }}
-                                    </span>
+                                <td class="itens-tabela text-primary w-4/12">{{ $convidado->telefoneConvidado ?? '—' }}</td>
+                                <td class="itens-tabela text-center text-primary w-2/12">{{ $convidado->acompanhantes_count }}
                                 </td>
-                                <td class="px-4 py-3 text-primary w-4/12">{{ $convidado->telefoneConvidado ?? '—' }}</td>
-                                <td class="px-4 py-3 text-primary w-1/12">
-                                     {{ $convidado->acompanhantes_count }}
-                                </td>
-                                <td class="px-4 py-3 w-2/12">
-                                    <div class="flex gap-2">
-                                        @if ($convidado->statusConvidado === 'PENDENTE' && $convidado->telefoneConvidado)
-                                            <a href="{{ $convidado->linkConfirmacaoWhatsapp($casamento->nomeCasamento) }}"
-                                                target="_blank"
-                                                class="w-9 h-9 flex items-center justify-center rounded-lg bg-primary text-white shrink-0">
-                                                <i class="fa-brands fa-whatsapp"></i>
-                                            </a>
-                                        @endif
+                                <td class="itens-tabela w-2/12">
+                                    <div class="flex gap-1 justify-center">
                                         <form method="POST" action="{{ route('convidado.destroy', [$casamento, $convidado]) }}"
                                             onsubmit="return confirm('Remover {{ $convidado->nomeConvidado }}?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit"
-                                                class="w-9 h-9 flex items-center justify-center rounded-lg bg-primary text-white cursor-pointer">
+                                            <button type="submit" class="icone-acao cursor-pointer">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </form>

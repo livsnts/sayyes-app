@@ -5,7 +5,6 @@
 @php
 $baseClasses = '
     px-8 py-2
-    mt-2
     rounded-lg
     transition-colors
     duration-200

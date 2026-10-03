@@ -40,6 +40,7 @@
 
     .font-secondary {
         font-family: var(--font-secondary);
+        font-size: small;
     }
 }
 
@@ -286,7 +287,7 @@ body {
 
 .card-acao {
     position: relative;
-    padding: 1rem;
+    padding: 0.7rem;
     border: 3px solid #19539D;
     border-radius: 28px 22px 32px 18px / 18px 30px 20px 28px;
 }
@@ -333,4 +334,49 @@ body {
 .card-resumo-label {
     color: var(--color-text-muted);
     font-size: 0.875rem;
+}
+
+.itens-tabela {
+    padding-inline: calc(var(--spacing) * 4);
+    padding-block: calc(var(--spacing) * 3);
+}
+
+.botao-detalhes {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    background-color:#19539D;
+    color: #fff;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.botao-detalhes::hover {
+    cursor: pointer;
+    background-color:var(--color-primary-dark);
+}
+
+.icone-acao {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    color: var(--color-primary);
+    flex-shrink: 0;
+    transition: background-color 0.15s ease;
+}
+
+.icone-acao:hover {
+    background-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    cursor: pointer;
+}
+
+.campo-busca {
+    padding-right: 2.5rem;
+    padding: 0.5rem;
 }

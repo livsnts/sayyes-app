@@ -6,6 +6,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\CasamentoController;
 use App\Http\Controllers\ConvidadoController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\FornecedorConfiancaController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -52,8 +53,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/casamentos/{casamento}/convidados/{convidado}/editar', [ConvidadoController::class, 'edit'])->name('convidado.edit');
     Route::put('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'update'])->name('convidado.update');
     Route::delete('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'destroy'])->name('convidado.destroy');
+
+
+    // ---- Fornecedores de confiança ----
+    Route::get('/fornecedores-confianca', [FornecedorConfiancaController::class, 'index'])->name('fornecedor-confianca.index');
+    Route::post('/fornecedores-confianca', [FornecedorConfiancaController::class, 'store'])->name('fornecedor-confianca.store');
+    Route::put('/fornecedores-confianca/{fornecedorConfianca}', [FornecedorConfiancaController::class, 'update'])->name('fornecedor-confianca.update');
+    Route::delete('/fornecedores-confianca/{fornecedorConfianca}', [FornecedorConfiancaController::class, 'destroy'])->name('fornecedor-confianca.destroy');
+
 });
 
 // ------ confirmação de presença via token --------
 Route::get('/confirmar/{token}', [ConvidadoController::class, 'confirmar'])->name('convidado.confirmar');
 Route::post('/confirmar/{token}', [ConvidadoController::class, 'salvarConfirmacao'])->name('convidado.salvar-confirmacao');
+

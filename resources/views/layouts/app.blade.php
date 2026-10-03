@@ -15,6 +15,7 @@
 
 <body class="font-primary">
     <x-navbar />
+    <x-flash-messages />
     @yield('content')
 </body>
 
