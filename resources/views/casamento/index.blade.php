@@ -25,15 +25,22 @@
                         </select>
                     </div>
 
-                    <x-input label="De" name="data_de" type="date" :value="request('data_de')" class="flex-1" />
-                    <x-input label="Até" name="data_ate" type="date" :value="request('data_ate')" class="flex-1" />
+                    <div x-data="{ de: '{{ request('data_de') }}', ate: '{{ request('data_ate') }}' }" class="flex gap-4">
+                        <x-input label="De" name="data_de" type="date" :value="request('data_de')" class="flex-1"
+                            x-model="de" x-bind:max="ate" />
+
+                        <x-input label="Até" name="data_ate" type="date" :value="request('data_ate')" class="flex-1"
+                            x-model="ate" x-bind:min="de" />
+                    </div>
+
                 </div>
 
                 <div class="flex gap-3">
-                    <x-button type="submit" class="flex-1">Filtrar</x-button>
                     <x-button type="link" href="{{ route('casamento.index') }}" variant="outline" class="flex-1">
                         Limpar
                     </x-button>
+                    <x-button type="submit" class="flex-1">Filtrar</x-button>
+
                 </div>
             </form>
         </x-card-sketch>
@@ -69,12 +76,12 @@
                                 </div>
 
                                 <span class="text-xs font-semibold px-3 py-1 rounded-full
-                                                            @if ($casamento->statusCasamento === 'ATIVO') bg-success/10 text-success
-                                                            @elseif ($casamento->statusCasamento === 'REALIZADO') bg-primary/10 text-primary
-                                                            @elseif ($casamento->statusCasamento === 'CANCELADO') bg-danger/10 text-danger
-                                                            @else bg-warning/10 text-warning
-                                                            @endif
-                                                        ">
+                                                                        @if ($casamento->statusCasamento === 'ATIVO') bg-success/10 text-success
+                                                                        @elseif ($casamento->statusCasamento === 'REALIZADO') bg-primary/10 text-primary
+                                                                        @elseif ($casamento->statusCasamento === 'CANCELADO') bg-danger/10 text-danger
+                                                                        @else bg-warning/10 text-warning
+                                                                        @endif
+                                                                    ">
                                     {{ ucfirst(strtolower($casamento->statusCasamento)) }}
                                 </span>
 

@@ -32,6 +32,13 @@ class CasamentoController extends Controller
                 $query->where('dataCasamento', '<=', $request->data_ate);
             }
 
+            $request->validate([
+                'data_de' => ['nullable', 'date'],
+                'data_ate' => ['nullable', 'date', 'after_or_equal:data_de'],
+            ], [
+                'data_ate.after_or_equal' => 'A data final não pode ser anterior à data inicial.',
+            ]);
+
             $casamentos = $query->orderBy('dataCasamento')->get();
 
             return view('casamento.index', compact('casamentos'));
