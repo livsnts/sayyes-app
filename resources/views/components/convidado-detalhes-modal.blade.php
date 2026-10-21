@@ -10,22 +10,25 @@
         </a>
     </p>
 
-    <div class="space-y-1 text-primary">
-        <p>Nome: {{ $convidado->nomeConvidado }}</p>
+    <div class="space-y-1 text-primary font-secondary">
+        <p><strong>Nome:</strong> {{ $convidado->nomeConvidado }}</p>
         <p><strong>Status:</strong> <x-convidado-status :status="$convidado->statusConvidado" /></p>
         <p><strong>Telefone:</strong> {{ $convidado->telefoneConvidado ?? '—' }}</p>
+        <p><strong>Faixa etária:</strong> {{ $convidado->faixaEtariaConvidado?->value ?? '—' }}</p>
+        <p><strong>Gênero:</strong> {{ $convidado->generoConvidado?->value ?? '—' }}</p>
         <p><strong>Data de confirmação:</strong> {{ $convidado->dataConfirmacao?->format('d/m/Y') ?? '—' }}</p>
         <p><strong>Observações da confirmação:</strong> {{ $convidado->observacoesConfirmacao ?? '—' }}</p>
-        <p><strong>Alergias:</strong> {{ $convidado->alergiasConvidado ?? '—' }}</p>
     </div>
 
     @if ($convidado->acompanhantes->isNotEmpty())
         <h3 class="font-bold text-primary mt-4 mb-2">Acompanhantes</h3>
-        <div class="space-y-1">
+        <div class="space-y-1 font-secondary">
             @foreach ($convidado->acompanhantes as $acompanhante)
-                <p class="text-primary">
-                    <strong>Nome:</strong> {{ $acompanhante->nomeAcompanhante }} —
-                    <strong>Idade:</strong> {{ $acompanhante->idadeAcompanhante ?? '—' }}
+                <p class="font-secondary text-primary">
+                    <strong>{{ $acompanhante->nomeAcompanhante }}</strong> —
+                    {{ $acompanhante->faixaEtariaAcompanhante?->value ?? 'Faixa não informada' }},
+                    {{ $acompanhante->generoAcompanhante?->value ?? 'gênero não informado' }} —
+                    <x-convidado-status :status="$acompanhante->statusAcompanhante" />
                 </p>
             @endforeach
         </div>
@@ -40,8 +43,7 @@
         </form>
 
         @if ($convidado->telefoneConvidado)
-            <a href="{{ $convidado->linkConfirmacaoWhatsapp($casamento->nomeCasamento) }}" target="_blank"
-                class="flex-1">
+            <a href="{{ $convidado->linkConfirmacaoWhatsapp($casamento->nomeCasamento) }}" target="_blank" class="flex-1">
                 <x-button type="button" class="w-full">Entrar em contato</x-button>
             </a>
         @endif

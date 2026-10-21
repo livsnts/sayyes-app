@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use App\Enums\FaixaEtaria;
+use App\Enums\Genero;
 
 #[Fillable([
     'casamento_id',
@@ -17,7 +19,8 @@ use Illuminate\Support\Str;
     'quantidadeMaxAcompanhantes',
     'dataConfirmacao',
     'observacoesConfirmacao',
-    'alergiasConvidado',
+    'faixaEtariaConvidado',
+    'generoConvidado',
 ])]
 
 class Convidado extends Model
@@ -37,6 +40,8 @@ class Convidado extends Model
     {
         return [
             'dataConfirmacao' => 'datetime',
+            'faixaEtariaConvidado' => FaixaEtaria::class,
+            'generoConvidado' => Genero::class,
         ];
     }
 

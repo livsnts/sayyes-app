@@ -9,6 +9,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ModeloConvidadosExport;
+use App\Enums\FaixaEtaria;
+use App\Enums\Genero;
+use Illuminate\Validation\Rule;
 
 class ConvidadoController extends Controller
 {
@@ -30,26 +33,30 @@ class ConvidadoController extends Controller
 
         $convidadosFiltrados = $query->orderBy('nomeConvidado')->get();
 
-        $todosConvidados = $casamento->convidados()->withCount('acompanhantes')->get();
+        $todosConvidados = $casamento->convidados()->with('acompanhantes')->get();
         $estatisticas = $this->estatisticasConvidados($todosConvidados);
 
-        return view('convidados.index', array_merge(
-            compact('casamento', 'convidadosFiltrados'),
-            $estatisticas
-        ));
+        return view('convidados.index', compact('casamento', 'convidadosFiltrados', 'estatisticas'));
+
     }
 
     private function estatisticasConvidados($convidados): array
     {
+        // soma o convidado principal (se tiver o status) + acompanhantes com o status
+        $pessoasComStatus = fn(string $status) => $convidados->sum(
+            fn($c) => ($c->statusConvidado === $status ? 1 : 0)
+                + $c->acompanhantes->where('statusAcompanhante', $status)->count()
+        );
+
         return [
             'totalConvidados' => $convidados->count(),
-            'capacidadeMaxima' => $convidados->sum(fn($c) => 1 + $c->quantidadeMaxAcompanhantes),
+            'totalPessoas' => $convidados->sum(fn($c) => 1 + $c->acompanhantes->count()),
             'confirmados' => $convidados->where('statusConvidado', 'CONFIRMADO')->count(),
-            'totalPessoasConfirmadas' => $convidados
-                ->where('statusConvidado', 'CONFIRMADO')
-                ->sum(fn($c) => 1 + $c->acompanhantes_count),
+            'totalPessoasConfirmadas' => $pessoasComStatus('CONFIRMADO'),
             'pendentes' => $convidados->where('statusConvidado', 'PENDENTE')->count(),
+            'totalPessoasPendentes' => $pessoasComStatus('PENDENTE'),
             'recusados' => $convidados->where('statusConvidado', 'RECUSADO')->count(),
+            'totalPessoasRecusadas' => $pessoasComStatus('RECUSADO'),
         ];
     }
 
@@ -59,13 +66,10 @@ class ConvidadoController extends Controller
 
         $convidados = $casamento->convidados()->withCount('acompanhantes')->latest()->get();
 
-        $todosConvidados = $casamento->convidados()->withCount('acompanhantes')->get();
+        $todosConvidados = $casamento->convidados()->with('acompanhantes')->get();
         $estatisticas = $this->estatisticasConvidados($todosConvidados);
 
-        return view('convidados.create', array_merge(
-            compact('casamento', 'convidados'),
-            $estatisticas
-        ));
+        return view('convidados.create', compact('casamento', 'convidados', 'estatisticas'));
     }
 
     public function store(Request $request, Casamento $casamento)
@@ -75,14 +79,17 @@ class ConvidadoController extends Controller
         $request->validate([
             'nomeConvidado' => ['required', 'string', 'max:255'],
             'telefoneConvidado' => ['nullable', 'string'],
-            'alergiasConvidado' => ['nullable', 'string'],
+            'faixaEtariaConvidado' => ['nullable', Rule::enum(FaixaEtaria::class)],
+            'generoConvidado' => ['nullable', Rule::enum(Genero::class)],
             'acompanhantes' => ['nullable', 'array'],
             'acompanhantes.*.nome' => ['required', 'string', 'max:255'],
-            'acompanhantes.*.idade' => ['nullable', 'integer', 'min:0'],
+            'acompanhantes.*.faixaEtaria' => ['nullable', Rule::enum(FaixaEtaria::class)],
+            'acompanhantes.*.genero' => ['nullable', Rule::enum(Genero::class)],
         ], [
             'nomeConvidado.required' => 'O nome do convidado é obrigatório.',
             'acompanhantes.*.nome.required' => 'Informe o nome de todos os acompanhantes adicionados.',
-            'acompanhantes.*.idade.integer' => 'A idade deve ser um número.',
+            'acompanhantes.*.faixaEtaria.enum' => 'A faixa etária do acompanhante é inválida.',
+            'acompanhantes.*.genero.enum' => 'O gênero do acompanhante é inválido.',
         ]);
 
         $acompanhantes = $request->input('acompanhantes', []);
@@ -90,14 +97,16 @@ class ConvidadoController extends Controller
         $convidado = $casamento->convidados()->create([
             'nomeConvidado' => $request->nomeConvidado,
             'telefoneConvidado' => $request->telefoneConvidado,
-            'alergiasConvidado' => $request->alergiasConvidado,
+            'faixaEtariaConvidado' => $request->faixaEtariaConvidado,
+            'generoConvidado' => $request->generoConvidado,
             'quantidadeMaxAcompanhantes' => count($acompanhantes),
         ]);
 
         foreach ($acompanhantes as $acompanhante) {
             $convidado->acompanhantes()->create([
                 'nomeAcompanhante' => $acompanhante['nome'],
-                'idadeAcompanhante' => $acompanhante['idade'] ?? null,
+                'faixaEtariaAcompanhante' => $acompanhante['faixaEtaria'] ?? null,
+                'generoAcompanhante' => $acompanhante['genero'] ?? null,
             ]);
         }
 
@@ -152,17 +161,20 @@ class ConvidadoController extends Controller
             'nomeConvidado' => ['required', 'string', 'max:255'],
             'telefoneConvidado' => ['nullable', 'string'],
             'statusConvidado' => ['required', 'in:PENDENTE,CONFIRMADO,RECUSADO'],
-            'alergiasConvidado' => ['nullable', 'string'],
+            'faixaEtariaConvidado' => ['nullable', Rule::enum(FaixaEtaria::class)],
+            'generoConvidado' => ['nullable', Rule::enum(Genero::class)],
             'observacoesConfirmacao' => ['nullable', 'string'],
             'acompanhantes' => ['nullable', 'array'],
+            'acompanhantes.*.id' => ['nullable', 'integer'],
             'acompanhantes.*.nome' => ['required', 'string', 'max:255'],
-            'acompanhantes.*.idade' => ['nullable', 'integer', 'min:0'],
+            'acompanhantes.*.faixaEtaria' => ['nullable', Rule::enum(FaixaEtaria::class)],
+            'acompanhantes.*.genero' => ['nullable', Rule::enum(Genero::class)],
+            'acompanhantes.*.status' => ['nullable', 'in:PENDENTE,CONFIRMADO,RECUSADO']
         ], [
             'nomeConvidado.required' => 'O nome do convidado é obrigatório.',
             'statusConvidado.required' => 'O status é obrigatório.',
             'statusConvidado.in' => 'Status inválido.',
             'acompanhantes.*.nome.required' => 'Informe o nome de todos os acompanhantes adicionados.',
-            'acompanhantes.*.idade.integer' => 'A idade deve ser um número.',
         ]);
 
         $acompanhantes = $request->input('acompanhantes', []);
@@ -171,19 +183,29 @@ class ConvidadoController extends Controller
             'nomeConvidado' => $request->nomeConvidado,
             'telefoneConvidado' => $request->telefoneConvidado,
             'statusConvidado' => $request->statusConvidado,
-            'alergiasConvidado' => $request->alergiasConvidado,
+            'faixaEtariaConvidado' => $request->faixaEtariaConvidado,
+            'generoConvidado' => $request->generoConvidado,
             'observacoesConfirmacao' => $request->observacoesConfirmacao,
             'quantidadeMaxAcompanhantes' => count($acompanhantes),
         ]);
 
-        $convidado->acompanhantes()->delete();
+        $idsMantidos = [];
 
-        foreach ($acompanhantes as $acompanhante) {
-            $convidado->acompanhantes()->create([
-                'nomeAcompanhante' => $acompanhante['nome'],
-                'idadeAcompanhante' => $acompanhante['idade'] ?? null,
-            ]);
+        foreach ($acompanhantes as $dados) {
+            $acompanhante = $convidado->acompanhantes()->updateOrCreate(
+                ['id' => $dados['id'] ?? null],
+                [
+                    'nomeAcompanhante' => $dados['nome'],
+                    'faixaEtariaAcompanhante' => $dados['faixaEtaria'] ?? null,
+                    'generoAcompanhante' => $dados['genero'] ?? null,
+                    'statusAcompanhante' => $dados['status'] ?? 'PENDENTE',
+                ]
+            );
+
+            $idsMantidos[] = $acompanhante->id;
         }
+
+        $convidado->acompanhantes()->whereNotIn('id', $idsMantidos)->delete();
 
         return redirect()->route('convidado.index', $casamento)->with('sucesso', 'Convidado atualizado com sucesso!');
     }
@@ -203,13 +225,11 @@ class ConvidadoController extends Controller
         $request->validate([
             'statusConvidado' => ['required', 'in:CONFIRMADO,RECUSADO'],
             'observacoesConfirmacao' => ['nullable', 'string'],
-            'alergiasConvidado' => ['nullable', 'string'],
         ]);
 
         $convidado->update([
             'statusConvidado' => $request->statusConvidado,
             'observacoesConfirmacao' => $request->observacoesConfirmacao,
-            'alergiasConvidado' => $request->alergiasConvidado,
             'dataConfirmacao' => now(),
         ]);
 

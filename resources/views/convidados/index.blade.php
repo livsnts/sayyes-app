@@ -13,25 +13,7 @@
                 Visualize quem estará no <strong class="text-primary">{{ $casamento->nomeCasamento }} </p>
         </div>
 
-        {{-- Cards de resumo: cada um é um link que filtra a tabela pelo status --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            @php
-                $filtros = [
-                    null => ['label' => 'Todos', 'valor' => $totalConvidados, 'cor' => 'text-primary'],
-                    'CONFIRMADO' => ['label' => 'Confirmados', 'valor' => $confirmados, 'cor' => 'text-success'],
-                    'PENDENTE' => ['label' => 'Pendentes', 'valor' => $pendentes, 'cor' => 'text-warning'],
-                    'RECUSADO' => ['label' => 'Recusados', 'valor' => $recusados, 'cor' => 'text-danger'],
-                ];
-            @endphp
-
-            @foreach ($filtros as $valorStatus => $filtro)
-                <a href="{{ route('convidado.index', array_filter(['casamento' => $casamento, 'status' => $valorStatus, 'busca' => request('busca')])) }}"
-                    class="card-resumo block transition {{ request('status') === $valorStatus ? 'bg-secondary/30' : '' }}">
-                    <p class="card-resumo-valor {{ $filtro['cor'] }}">{{ $filtro['valor'] }}</p>
-                    <p class="card-resumo-label">{{ $filtro['label'] }}</p>
-                </a>
-            @endforeach
-        </div>
+       <x-convidado-resumo :estatisticas="$estatisticas" :casamento="$casamento" comFiltro />
 
         <form method="GET" action="{{ route('convidado.index', $casamento) }}" class="flex gap-3 mb-4 items-center">
             @if (request('status'))

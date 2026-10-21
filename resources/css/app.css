@@ -38,6 +38,11 @@
         font-weight: 640;
     }
 
+    .font-primary-thin {
+        font-family: var(--font-primary);
+        font-weight: 500;
+    }
+
     .font-secondary {
         font-family: var(--font-secondary);
         font-size: small;
@@ -324,6 +329,10 @@ body {
     border-radius: 1rem;
     padding: 1.5rem 0;
     text-align: center;
+}
+.card-resumo:hover {
+    background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    cursor: pointer;
 }
 
 .card-resumo-valor {
