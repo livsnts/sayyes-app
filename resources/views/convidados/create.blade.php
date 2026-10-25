@@ -4,6 +4,8 @@
 
     <main class="page-main-wide">
 
+        <x-breadcrumb-casamento />
+
         <div class="page-header">
             <div class="page-header-title-row">
                 <img src="{{ asset('images/doodles/envelope.png') }}" alt="Convite" class="page-header-doodle">

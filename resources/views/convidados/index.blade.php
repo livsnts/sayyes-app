@@ -4,6 +4,8 @@
 
     <main class="page-main-wide" x-data="{ modalDetalhes: null, modalEditar: null }">
 
+        <x-breadcrumb-casamento />
+
         <div class="page-header">
             <div class="page-header-title-row">
                 <img src="{{ asset('images/doodles/listas.png') }}" alt="Convite" class="page-header-doodle">
@@ -13,7 +15,7 @@
                 Visualize quem estará no <strong class="text-primary">{{ $casamento->nomeCasamento }} </p>
         </div>
 
-       <x-convidado-resumo :estatisticas="$estatisticas" :casamento="$casamento" comFiltro />
+        <x-convidado-resumo :estatisticas="$estatisticas" :casamento="$casamento" comFiltro />
 
         <form method="GET" action="{{ route('convidado.index', $casamento) }}" class="flex gap-3 mb-4 items-center">
             @if (request('status'))
@@ -32,7 +34,8 @@
                 @endif
             </div>
 
-            <button type="submit" class="botao-detalhes cursor-pointer"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <button type="submit" class="botao-detalhes cursor-pointer"><i
+                    class="fa-solid fa-magnifying-glass"></i></button>
             <a href="{{ route('convidado.create', $casamento) }}" class="botao-detalhes"><i
                     class="fa-solid fa-plus"></i></a>
         </form>

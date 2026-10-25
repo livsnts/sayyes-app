@@ -2,6 +2,9 @@
 
 @section('content')
     <main class="page-main">
+
+        <x-breadcrumb-casamento />
+
         <h1 class="titulo">Editar Casamento</h1>
 
         <x-card-sketch>
@@ -42,7 +45,7 @@
 
                 <x-textarea label="Descrição" name="descricaoCasamento" :value="$casamento->descricaoCasamento" />
 
-                <div class="flex flex-col gap-2 mt-4">
+                <div class="flex flex-col gap-2 mt-4 mb-8">
                     <label class="text-primary">Foto do casal (opcional)</label>
                     @if ($casamento->imagemCasamento && file_exists(storage_path('app/public/' . $casamento->imagemCasamento)))
                         <img src="{{ asset('storage/' . $casamento->imagemCasamento) }}"
@@ -54,17 +57,15 @@
                     @enderror
                 </div>
 
-                <div>
-                    <a href="{{ route('casamento.show', $casamento) }}">
-                        <x-button variant="outline" class="flex-1">Cancelar</x-button>
+                <div class="flex gap-4">
+                    <a href="{{ route('casamento.show', $casamento) }}"
+                        class="flex-1 text-center px-8 py-2 rounded-lg border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-white transition-colors duration-200">
+                        Cancelar
                     </a>
 
                     <x-button type="submit" class="flex-1">
                         Salvar alterações
                     </x-button>
-                </div>
-
-
                 </div>
             </form>
         </x-card-sketch>

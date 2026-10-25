@@ -24,6 +24,7 @@ $variantClasses = [
 <button
     {{
         $attributes->merge([
+            'type' => 'button',
             'class' => $baseClasses . ' ' . ($variantClasses[$variant] ?? $variantClasses['primary'])
         ])
     }}

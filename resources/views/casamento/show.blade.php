@@ -4,6 +4,8 @@
 
     <main class="page-main">
 
+        <x-breadcrumb-casamento />
+
         {{-- Polaroid --}}
         <div class="flex justify-center mb-8">
             <div class="bg-primary-light p-4 pb-8 rotate-[-1.5deg] max-w-xs w-full border-2 border-primary"
@@ -29,11 +31,11 @@
                         @endif
                     </p>
                     <span class="text-xs font-semibold px-3 py-1 rounded-full mt-2 inline-block
-                                                @if ($casamento->statusCasamento === 'ATIVO') bg-success/10 text-success
-                                                @elseif ($casamento->statusCasamento === 'REALIZADO') bg-primary/10 text-primary
-                                                @elseif ($casamento->statusCasamento === 'CANCELADO') bg-danger/10 text-danger
-                                                @else bg-warning/10 text-warning
-                                                @endif">
+                                                    @if ($casamento->statusCasamento === 'ATIVO') bg-success/10 text-success
+                                                    @elseif ($casamento->statusCasamento === 'REALIZADO') bg-primary/10 text-primary
+                                                    @elseif ($casamento->statusCasamento === 'CANCELADO') bg-danger/10 text-danger
+                                                    @else bg-warning/10 text-warning
+                                                    @endif">
                         {{ ucfirst(strtolower($casamento->statusCasamento)) }}
                     </span>
                 </div>
@@ -81,7 +83,8 @@
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-6">
             <a href="{{ route('casamento.equipe', $casamento) }}">
                 <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
-                    <img src="{{ asset('images/doodles/passaros.png') }}" alt="Passaros" class="h-16 sm:h-24 object-contain">
+                    <img src="{{ asset('images/doodles/passaros.png') }}" alt="Passaros"
+                        class="h-16 sm:h-24 object-contain">
                     <p class="text-primary font-semibold text-sm">Equipe do evento</p>
                 </div>
             </a>
@@ -103,7 +106,7 @@
                     <p class="text-primary font-semibold text-sm">Lista de convidados</p>
                 </div>
             </a>
-             <a href="{{ route('convidado.index', $casamento) }}">
+            <a href="{{ route('convidado.index', $casamento) }}">
                 <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
                     <img src="{{ asset('images/doodles/brinde.png') }}" alt="Brinde" class="h-24 object-contain">
                     <p class="text-primary font-semibold text-sm">Fornecedores</p>

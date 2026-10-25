@@ -4,6 +4,8 @@
 
     <main class="page-main">
 
+        <x-breadcrumb-casamento />
+
         <div class="page-header">
             <div class="page-header-title-row">
                 <img src="{{ asset('images/doodles/passaros.png') }}" alt="Passaros" class="page-header-doodle">
@@ -39,28 +41,28 @@
 
         {{-- Adicionar membro --}}
         <div class="card-sketch" x-data="{
-                email: '',
-                resultado: null,
-                jaMembro: false,
-                naoEncontrado: false,
-                carregando: false,
-                async buscar() {
-                    this.resultado = null;
-                    this.jaMembro = false;
-                    this.naoEncontrado = false;
-                    this.carregando = true;
-                    const res = await fetch('{{ route('casamento.buscar-usuario', $casamento) }}?email=' + encodeURIComponent(this.email));
-                    const data = await res.json();
-                    this.carregando = false;
-                    if (data.ja_membro) {
-                        this.jaMembro = true;
-                    } else if (data.encontrado) {
-                        this.resultado = data;
-                    } else {
-                        this.naoEncontrado = true;
+                    email: '',
+                    resultado: null,
+                    jaMembro: false,
+                    naoEncontrado: false,
+                    carregando: false,
+                    async buscar() {
+                        this.resultado = null;
+                        this.jaMembro = false;
+                        this.naoEncontrado = false;
+                        this.carregando = true;
+                        const res = await fetch('{{ route('casamento.buscar-usuario', $casamento) }}?email=' + encodeURIComponent(this.email));
+                        const data = await res.json();
+                        this.carregando = false;
+                        if (data.ja_membro) {
+                            this.jaMembro = true;
+                        } else if (data.encontrado) {
+                            this.resultado = data;
+                        } else {
+                            this.naoEncontrado = true;
+                        }
                     }
-                }
-            }">
+                }">
             <h2 class="titulo-card">Adicionar membro</h2>
 
             <form @submit.prevent="buscar" class="flex gap-3 mb-4">
