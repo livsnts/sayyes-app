@@ -213,31 +213,50 @@ class ConvidadoController extends Controller
     // Confirmação
     public function confirmar(string $token)
     {
-        $convidado = Convidado::where('tokenConfirmacao', $token)->firstOrFail();
+        $convidado = Convidado::with(['casamento', 'acompanhantes']) // eager loading
+            ->where('tokenConfirmacao', $token)
+            ->firstOrFail();
 
         return view('convidados.confirmar', compact('convidado'));
     }
 
     public function salvarConfirmacao(Request $request, string $token)
     {
-        $convidado = Convidado::where('tokenConfirmacao', $token)->firstOrFail();
+        $convidado = Convidado::with('acompanhantes')
+            ->where('tokenConfirmacao', $token)
+            ->firstOrFail();
 
         $request->validate([
-            'statusConvidado' => ['required', 'in:CONFIRMADO,RECUSADO'],
-            'observacoesConfirmacao' => ['nullable', 'string'],
+            'convidadoVai' => ['nullable', 'boolean'],
+            'acompanhantesQueVao' => ['nullable', 'array'],
+            'acompanhantesQueVao.*' => ['integer'],
+            'observacoesConfirmacao' => ['nullable', 'string', 'max:1000'],
         ]);
 
+        $idsQueVao = $request->input('acompanhantesQueVao', []);
+
+        $principalVai = $request->boolean('convidadoVai');
+
         $convidado->update([
-            'statusConvidado' => $request->statusConvidado,
+            'statusConvidado' => $principalVai ? 'CONFIRMADO' : 'RECUSADO',
             'observacoesConfirmacao' => $request->observacoesConfirmacao,
             'dataConfirmacao' => now(),
         ]);
 
+        // percorre só os acompanhantes DESSE convidado
+        foreach ($convidado->acompanhantes as $acompanhante) {
+            $acompanhante->update([
+                'statusAcompanhante' => in_array($acompanhante->id, $idsQueVao) ? 'CONFIRMADO' : 'RECUSADO',
+            ]);
+        }
+
+        $totalConfirmados = ($principalVai ? 1 : 0)+ $convidado->acompanhantes->where('statusAcompanhante', 'CONFIRMADO')->count();
+
         return back()->with(
             'sucesso',
-            $request->statusConvidado === 'CONFIRMADO'
-            ? 'Presença confirmada. Nos vemos no grande dia!'
-            : 'Resposta registrada. Obrigado por avisar!'
+            $totalConfirmados > 0
+                ? 'Presença confirmada. Nos vemos no grande dia!'
+                : 'Resposta registrada. Obrigado por avisar!'
         );
     }
 }
