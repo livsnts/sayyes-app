@@ -23,6 +23,10 @@
             <p class="text-text-muted text-xs">
                 {{ $card['convites'] }} {{ $card['convites'] === 1 ? 'convite' : 'convites' }}
             </p>
+            @php $faixas = $estatisticas['faixas'][$status]; @endphp
+            <p class="text-text-muted text-xs">
+                {{ $faixas['adultos'] }} adultos · {{ $faixas['criancas'] }} crianças · {{ $faixas['bebes'] }} bebês
+            </p>
         </{{ $tag }}>
     @endforeach
 </div>

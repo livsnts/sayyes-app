@@ -28,6 +28,7 @@ class Casamento extends Model
         return [
             'dataCasamento' => 'date',
             'orcamentoTotal' => 'decimal:2',
+            'herdaFornecedoresAssessor' => 'boolean',
         ];
     }
 
@@ -49,5 +50,20 @@ class Casamento extends Model
     public function orcamentos(): HasMany
     {
         return $this->hasMany(OrcamentoFornecedor::class);
+    }
+
+    public function assessores(): BelongsToMany
+    {
+        return $this->usuarios()->where('tipoUsuario', 'ASSESSOR');
+    }
+
+    
+    // Pessoas que entram no cálculo dos fornecedores: tudo, exceto recusados.
+    public function contagemPessoas(): array
+    {
+        $faixas = $this->convidados()->with('acompanhantes')->get()
+            ->flatMap(fn(Convidado $convidado) => $convidado->faixasEtariasComStatus(['PENDENTE', 'CONFIRMADO']));
+
+        return Convidado::resumoFaixas($faixas);
     }
 }

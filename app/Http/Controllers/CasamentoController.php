@@ -172,6 +172,10 @@ class CasamentoController extends Controller
             $dados['imagemCasamento'] = $request->file('imagemCasamento')->store('casamentos', 'public');
         }
 
+        // só faz sentido herdar se existir um assessor na equipe
+        $dados['herdaFornecedoresAssessor'] = $request->boolean('herdaFornecedoresAssessor')
+            && $casamento->assessores()->exists();
+
         $casamento->update($dados);
 
         return redirect()->route('casamento.show', $casamento)->with('sucesso', 'Casamento atualizado com sucesso!');

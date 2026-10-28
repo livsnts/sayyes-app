@@ -48,6 +48,11 @@ class ConvidadoController extends Controller
                 + $c->acompanhantes->where('statusAcompanhante', $status)->count()
         );
 
+        $faixasComStatus = fn(array $status) => Convidado::resumoFaixas(
+            $convidados->flatMap(fn(Convidado $c) => $c->faixasEtariasComStatus($status))
+        );
+
+
         return [
             'totalConvidados' => $convidados->count(),
             'totalPessoas' => $convidados->sum(fn($c) => 1 + $c->acompanhantes->count()),
@@ -57,6 +62,13 @@ class ConvidadoController extends Controller
             'totalPessoasPendentes' => $pessoasComStatus('PENDENTE'),
             'recusados' => $convidados->where('statusConvidado', 'RECUSADO')->count(),
             'totalPessoasRecusadas' => $pessoasComStatus('RECUSADO'),
+
+            'faixas' => [
+                '' => $faixasComStatus(['PENDENTE', 'CONFIRMADO', 'RECUSADO']),
+                'CONFIRMADO' => $faixasComStatus(['CONFIRMADO']),
+                'PENDENTE' => $faixasComStatus(['PENDENTE']),
+                'RECUSADO' => $faixasComStatus(['RECUSADO']),
+            ],
         ];
     }
 
@@ -250,13 +262,13 @@ class ConvidadoController extends Controller
             ]);
         }
 
-        $totalConfirmados = ($principalVai ? 1 : 0)+ $convidado->acompanhantes->where('statusAcompanhante', 'CONFIRMADO')->count();
+        $totalConfirmados = ($principalVai ? 1 : 0) + $convidado->acompanhantes->where('statusAcompanhante', 'CONFIRMADO')->count();
 
         return back()->with(
             'sucesso',
             $totalConfirmados > 0
-                ? 'Presença confirmada. Nos vemos no grande dia!'
-                : 'Resposta registrada. Obrigado por avisar!'
+            ? 'Presença confirmada. Nos vemos no grande dia!'
+            : 'Resposta registrada. Obrigado por avisar!'
         );
     }
 }

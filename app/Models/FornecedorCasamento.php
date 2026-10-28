@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\CategoriaFornecedor;
+use App\Enums\TipoValorFornecedor;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'statusFornecedorCasamento',
     'nomeFornecedorCasamento',
     'categoriaFornecedorCasamento',
+    'tipoValorFornecedorCasamento',
+    'valorTotalFornecedorCasamento',
+    'valorAdultoFornecedorCasamento',
+    'valorCriancaFornecedorCasamento',
     'valorTotalFornecedorCasamento',
     'contratoFornecedorCasamento',
     'observacoesFornecedorCasamento',
@@ -25,11 +30,21 @@ class FornecedorCasamento extends Model
 {
     use HasFactory;
 
+    public const STATUS = [
+        'EM_PESQUISA' => 'Em pesquisa',
+        'EM_NEGOCIACAO' => 'Em negociação',
+        'CONTRATADO' => 'Contratado',
+        'CANCELADO' => 'Cancelado',
+    ];
+
     protected function casts(): array
     {
         return [
             'categoriaFornecedorCasamento' => CategoriaFornecedor::class,
-            'valorTotalFornecedorCasamento' => 'decimal:2'
+            'tipoValorFornecedorCasamento' => TipoValorFornecedor::class,
+            'valorTotalFornecedorCasamento' => 'decimal:2',
+            'valorAdultoFornecedorCasamento' => 'decimal:2',
+            'valorCriancaFornecedorCasamento' => 'decimal:2',
         ];
     }
 

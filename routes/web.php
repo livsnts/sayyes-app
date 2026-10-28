@@ -7,6 +7,7 @@ use App\Http\Controllers\CasamentoController;
 use App\Http\Controllers\ConvidadoController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\FornecedorConfiancaController;
+use App\Http\Controllers\FornecedorCasamentoController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -60,6 +61,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/fornecedores-confianca', [FornecedorConfiancaController::class, 'store'])->name('fornecedor-confianca.store');
     Route::put('/fornecedores-confianca/{fornecedorConfianca}', [FornecedorConfiancaController::class, 'update'])->name('fornecedor-confianca.update');
     Route::delete('/fornecedores-confianca/{fornecedorConfianca}', [FornecedorConfiancaController::class, 'destroy'])->name('fornecedor-confianca.destroy');
+
+    // ---- Fornecedores do casamento ----
+    Route::get('/casamentos/{casamento}/fornecedores', [FornecedorCasamentoController::class, 'index'])->name('fornecedor-casamento.index');
+    Route::post('/casamentos/{casamento}/fornecedores', [FornecedorCasamentoController::class, 'store'])->name('fornecedor-casamento.store');
+    Route::put('/casamentos/{casamento}/fornecedores/{fornecedor}', [FornecedorCasamentoController::class, 'update'])->name('fornecedor-casamento.update');
+    Route::delete('/casamentos/{casamento}/fornecedores/{fornecedor}', [FornecedorCasamentoController::class, 'destroy'])->name('fornecedor-casamento.destroy');
 
 });
 
