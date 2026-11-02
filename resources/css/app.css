@@ -290,6 +290,13 @@ body {
     padding: 2.5rem 1.5rem;
 }
 
+.page-main-medium {
+    max-width: 65rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2.5rem 1.5rem;
+}
+
 .card-acao {
     position: relative;
     padding: 0.7rem;
@@ -301,7 +308,7 @@ body {
     margin-bottom: calc(var(--spacing) * 4);
     color: var(--color-primary);
     font-weight: bold;
-    font-size: large;
+    font-size: medium;
 }
 
 .page-header {
