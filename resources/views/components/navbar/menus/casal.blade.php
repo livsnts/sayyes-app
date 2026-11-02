@@ -1,7 +1,9 @@
 {{-- navbar/casal-links.blade.php --}}
 
 @php
-    $casamentoAtivo = auth()->user()->casamentos()->where('statusCasamento', 'ATIVO')->first();
+    $usuario = auth()->user();
+    $totalCasamentos = $usuario->casamentos()->count();
+    $temAtivo = $usuario->casamentos()->where('statusCasamento', 'ATIVO')->exists();
 @endphp
 
 <div class="flex flex-col gap-4 md:flex-row md:gap-20">
@@ -18,14 +20,16 @@
         Blog dos noivos
     </a>
 
-    @if ($casamentoAtivo)
-        <a href="{{ route('casamento.show', $casamentoAtivo) }}" class="nav-link">
-            Meu casamento
+    @if ($totalCasamentos > 0)
+        <a href="{{ route('casamento.index') }}" class="nav-link">
+            {{ $totalCasamentos > 1 ? 'Meus casamentos' : 'Meu casamento' }}
         </a>
-    @else
+    @endif
+
+    @unless ($temAtivo)
         <a href="{{ route('casamento.create') }}" class="nav-link">
             Criar casamento
         </a>
-    @endif
+    @endunless
 
 </div>

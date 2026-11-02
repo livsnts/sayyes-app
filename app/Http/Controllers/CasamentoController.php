@@ -13,7 +13,7 @@ class CasamentoController extends Controller
 
     public function index(Request $request)
     {
-        if (auth()->user()->tipoUsuario === 'ASSESSOR') {
+        if (auth()->user()->tipoUsuario === 'ASSESSOR' || auth()->user()->casamentos()->count() > 1) {
             $query = auth()->user()->casamentos();
 
             if ($request->filled('status')) {
@@ -56,9 +56,9 @@ class CasamentoController extends Controller
     public function create()
     {
         if (auth()->user()->tipoUsuario === 'NOIVO') {
-            $casamento = auth()->user()->casamentos()->first();
-            if ($casamento) {
-                return redirect()->route('casamento.show', $casamento);
+            $casamentoAtivo = auth()->user()->casamentos()->where('statusCasamento', 'ATIVO')->first();
+            if ($casamentoAtivo) {
+                return redirect()->route('casamento.show', $casamentoAtivo);
             }
         }
         return view('casamento.create');
@@ -147,10 +147,15 @@ class CasamentoController extends Controller
             $request->merge(['orcamentoTotal' => $valor]);
         }
 
+        $regraData = ['required', 'date'];
+        if ($request->dataCasamento !== $casamento->dataCasamento->format('Y-m-d')) {
+            $regraData[] = 'after:today';
+        }
+
         $request->validate([
             'statusCasamento' => ['required', 'in:ATIVO,REALIZADO,CANCELADO,INATIVO'],
             'nomeCasamento' => ['required', 'string', 'max:255'],
-            'dataCasamento' => ['required', 'date', 'after:today'],
+            'dataCasamento' => $regraData,
             'localCasamento' => ['nullable', 'string', 'max:255'],
             'orcamentoTotal' => ['required', 'numeric', 'min:0'],
             'descricaoCasamento' => ['nullable', 'string', 'max:1000'],
@@ -202,6 +207,11 @@ class CasamentoController extends Controller
             return response()->json(['encontrado' => false, 'ja_membro' => true]);
         }
 
+        if ($usuario->tipoUsuario === 'NOIVO'
+            && $usuario->casamentos()->where('statusCasamento', 'ATIVO')->exists()) {
+            return response()->json(['encontrado' => false, 'noivo_ocupado' => true]);
+        }
+
         return response()->json([
             'encontrado' => true,
             'id' => $usuario->id,
@@ -222,6 +232,14 @@ class CasamentoController extends Controller
 
         if ($casamento->usuarios()->where('user_id', $request->user_id)->exists()) {
             return back()->with('erro', 'Este usuário já é membro do casamento.');
+        }
+
+        $usuario = User::findOrFail($request->user_id);
+
+        // regra: um noivo participa de no máximo um casamento ativo
+        if ($usuario->tipoUsuario === 'NOIVO'
+            && $usuario->casamentos()->where('statusCasamento', 'ATIVO')->exists()) {
+            return back()->with('erro', 'Este noivo já participa de outro casamento ativo.');
         }
 
         $casamento->usuarios()->attach($request->user_id);

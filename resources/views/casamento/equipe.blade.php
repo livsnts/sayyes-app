@@ -16,8 +16,6 @@
             </p>
         </div>
 
-        <x-flash-messages />
-
         {{-- Membros atuais --}}
         <x-card-sketch class="mb-6">
             <h2 class="titulo-card">Membros atuais</h2>
@@ -41,28 +39,32 @@
 
         {{-- Adicionar membro --}}
         <div class="card-sketch" x-data="{
-                    email: '',
-                    resultado: null,
-                    jaMembro: false,
-                    naoEncontrado: false,
-                    carregando: false,
-                    async buscar() {
-                        this.resultado = null;
-                        this.jaMembro = false;
-                        this.naoEncontrado = false;
-                        this.carregando = true;
-                        const res = await fetch('{{ route('casamento.buscar-usuario', $casamento) }}?email=' + encodeURIComponent(this.email));
-                        const data = await res.json();
-                        this.carregando = false;
-                        if (data.ja_membro) {
-                            this.jaMembro = true;
-                        } else if (data.encontrado) {
-                            this.resultado = data;
-                        } else {
-                            this.naoEncontrado = true;
+                        email: '',
+                        resultado: null,
+                        jaMembro: false,
+                        noivoOcupado: false,
+                        naoEncontrado: false,
+                        carregando: false,
+                        async buscar() {
+                            this.resultado = null;
+                            this.jaMembro = false;
+                            this.noivoOcupado = false;
+                            this.naoEncontrado = false;
+                            this.carregando = true;
+                            const res = await fetch('{{ route('casamento.buscar-usuario', $casamento) }}?email=' + encodeURIComponent(this.email));
+                            const data = await res.json();
+                            this.carregando = false;
+                            if (data.ja_membro) {
+                                this.jaMembro = true;
+                            } else if (data.noivo_ocupado) {
+                                this.noivoOcupado = true;
+                            } else if (data.encontrado) {
+                                this.resultado = data;
+                            } else {
+                                this.naoEncontrado = true;
+                            }
                         }
-                    }
-                }">
+                    }">
             <h2 class="titulo-card">Adicionar membro</h2>
 
             <form @submit.prevent="buscar" class="flex gap-3 mb-4">
@@ -91,6 +93,11 @@
             {{-- Já é membro --}}
             <div x-show="jaMembro" x-cloak class="alert-danger">
                 Este usuário já é membro do casamento.
+            </div>
+
+            {{-- Noivo com outro casamento ativo --}}
+            <div x-show="noivoOcupado" x-cloak class="alert-danger">
+                Este noivo já participa de outro casamento ativo.
             </div>
 
             <div class="mb-4 flex gap-3 items-start px-4 py-3 rounded-lg border border-primary/20 text-text-muted text-sm">

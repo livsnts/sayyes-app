@@ -21,17 +21,7 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $request->session()->regenerate();
 
-            $usuario = Auth::user();
-
-            if ($usuario->tipoUsuario === 'NOIVO') {
-                $casamento = $usuario->casamentos()->where('statusCasamento', 'ATIVO')->first();
-                if ($casamento) {
-                    return redirect()->route('casamento.show', $casamento);
-                }
-                return redirect()->route('casamento.create');
-            }
-
-            return redirect()->route('inicio');
+            return redirect()->intended(route('inicio'));
         }
 
         return back()->withErrors([
