@@ -88,6 +88,40 @@ class Convidado extends Model
         return $faixas;
     }
 
+    // O convite tem alguém (principal ou acompanhante) com esse status?
+    public function temPessoaComStatus(string $status): bool
+    {
+        return $this->statusConvidado === $status
+            || $this->acompanhantes->contains('statusAcompanhante', $status);
+    }
+
+    public function nomesComStatus(string $status): Collection
+    {
+        $nomes = collect();
+
+        if ($this->statusConvidado === $status) {
+            $nomes->push($this->nomeConvidado);
+        }
+
+        foreach ($this->acompanhantes->where('statusAcompanhante', $status) as $acompanhante) {
+            $nomes->push($acompanhante->nomeAcompanhante);
+        }
+
+        return $nomes;
+    }
+
+    // Quantas pessoas do convite estão em cada status
+    public function contagemPorStatus(): array
+    {
+        $statusDasPessoas = collect([$this->statusConvidado])
+            ->merge($this->acompanhantes->pluck('statusAcompanhante'));
+
+        return [
+            'CONFIRMADO' => $statusDasPessoas->filter(fn($s) => $s === 'CONFIRMADO')->count(),
+            'PENDENTE' => $statusDasPessoas->filter(fn($s) => $s === 'PENDENTE')->count(),
+            'RECUSADO' => $statusDasPessoas->filter(fn($s) => $s === 'RECUSADO')->count(),
+        ];
+    }
 
     // Resume uma lista de faixas em adultos, crianças (4 a 12) e bebês (0 a 3).
     // Faixa não preenchida conta como adulto.

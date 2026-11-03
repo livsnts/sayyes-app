@@ -56,9 +56,34 @@
                     @forelse($convidadosFiltrados as $convidado)
                         <tr class="border-t border-primary/20">
                             <td class="itens-tabela font-semibold">{{ $convidado->id }}</td>
-                            <td class="itens-tabela font-semibold"><x-convidado-status :status="$convidado->statusConvidado" />
+                            @php $contagem = $convidado->contagemPorStatus(); @endphp
+                            <td class="itens-tabela font-semibold">
+                                <div class="flex flex-col text-xs leading-tight">
+                                    @if ($contagem['CONFIRMADO'])
+                                        <span class="text-success">{{ $contagem['CONFIRMADO'] }}
+                                            {{ $contagem['CONFIRMADO'] === 1 ? 'confirmado' : 'confirmados' }}</span>
+                                    @endif
+                                    @if ($contagem['PENDENTE'])
+                                        <span class="text-warning">{{ $contagem['PENDENTE'] }}
+                                            {{ $contagem['PENDENTE'] === 1 ? 'pendente' : 'pendentes' }}</span>
+                                    @endif
+                                    @if ($contagem['RECUSADO'])
+                                        <span class="text-danger">{{ $contagem['RECUSADO'] }}
+                                            {{ $contagem['RECUSADO'] === 1 ? 'recusado' : 'recusados' }}</span>
+                                    @endif
+                                </div>
                             </td>
-                            <td class="itens-tabela font-semibold">{{ $convidado->nomeConvidado }}</td>
+                            <td class="itens-tabela font-semibold">
+                                {{ $convidado->nomeConvidado }}
+
+                                {{-- ao filtrar por status, mostra quais pessoas do convite batem com o filtro --}}
+                                @if (request('status'))
+                                    <p class="text-xs font-normal text-text-muted">
+                                        {{ ucfirst(strtolower(request('status'))) }}:
+                                        {{ $convidado->nomesComStatus(request('status'))->join(', ') }}
+                                    </p>
+                                @endif
+                            </td>
                             <td class="itens-tabela font-semibold">{{ $convidado->telefoneConvidado ?? '—' }}</td>
                             <td class="itens-tabela text-center font-semibold">{{ $convidado->acompanhantes_count }}</td>
                             <td class="itens-tabela">

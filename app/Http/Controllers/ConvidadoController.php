@@ -24,7 +24,13 @@ class ConvidadoController extends Controller
         $query = $casamento->convidados()->withCount('acompanhantes')->with('acompanhantes');
 
         if ($request->filled('status')) {
-            $query->where('statusConvidado', $request->status);
+            $status = $request->status;
+
+            // mostra o convite se o principal OU algum acompanhante tiver o status
+            $query->where(function ($q) use ($status) {
+                $q->where('statusConvidado', $status)
+                    ->orWhereHas('acompanhantes', fn($a) => $a->where('statusAcompanhante', $status));
+            });
         }
 
         if ($request->filled('busca')) {
@@ -56,12 +62,12 @@ class ConvidadoController extends Controller
         return [
             'totalConvidados' => $convidados->count(),
             'totalPessoas' => $convidados->sum(fn($c) => 1 + $c->acompanhantes->count()),
-            'confirmados' => $convidados->where('statusConvidado', 'CONFIRMADO')->count(),
             'totalPessoasConfirmadas' => $pessoasComStatus('CONFIRMADO'),
-            'pendentes' => $convidados->where('statusConvidado', 'PENDENTE')->count(),
             'totalPessoasPendentes' => $pessoasComStatus('PENDENTE'),
-            'recusados' => $convidados->where('statusConvidado', 'RECUSADO')->count(),
             'totalPessoasRecusadas' => $pessoasComStatus('RECUSADO'),
+            'confirmados' => $convidados->filter(fn($c) => $c->temPessoaComStatus('CONFIRMADO'))->count(),
+            'pendentes' => $convidados->filter(fn($c) => $c->temPessoaComStatus('PENDENTE'))->count(),
+            'recusados' => $convidados->filter(fn($c) => $c->temPessoaComStatus('RECUSADO'))->count(),
 
             'faixas' => [
                 '' => $faixasComStatus(['PENDENTE', 'CONFIRMADO', 'RECUSADO']),

@@ -21,7 +21,8 @@
             <p class="card-resumo-valor {{ $card['cor'] }}">{{ $card['valor'] }}</p>
             <p class="card-resumo-label">{{ $card['label'] }}</p>
             <p class="text-text-muted text-xs">
-                {{ $card['convites'] }} {{ $card['convites'] === 1 ? 'convite' : 'convites' }}
+                {{ $status === '' ? '' : 'em ' }}{{ $card['convites'] }}
+                {{ $card['convites'] === 1 ? 'convite' : 'convites' }}
             </p>
             @php $faixas = $estatisticas['faixas'][$status]; @endphp
             <p class="text-text-muted text-xs">
