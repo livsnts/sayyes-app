@@ -7,3 +7,4 @@
 - Textos do campo da senha estão em inglês e a tela volta tudo ao começo
 - Fazer com que ambos os logins redirecionem para a página inicial
 - Tinha que ter uma data limite pra confirmação
+- convidado-acoes.blade.php não é usado em lugar nenhum

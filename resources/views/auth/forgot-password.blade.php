@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@php dump(session()->all()) @endphp
-
     @if(session()->has('status'))
         <span class="mb-4 text text-success">
             {{ session()->get('status') }}
@@ -9,7 +7,6 @@
     @endif
 
 @section('content')
-    <x-navbar />
 
     <main>
         <div class="flex justify-center py-12">

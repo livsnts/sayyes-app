@@ -12,7 +12,7 @@
                 <h1 class="titulo">Lista de Convidados</h1>
             </div>
             <p class="text-text-muted">
-                Visualize quem estará no <strong class="text-primary">{{ $casamento->nomeCasamento }} </p>
+                Visualize quem estará no <strong class="text-primary">{{ $casamento->nomeCasamento }} </strong> </p>
         </div>
 
         <x-convidado-resumo :estatisticas="$estatisticas" :casamento="$casamento" comFiltro />

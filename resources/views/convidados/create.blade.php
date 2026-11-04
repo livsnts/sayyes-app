@@ -150,11 +150,11 @@
                                 class="flex gap-3 items-start px-4 py-3 rounded-lg border border-primary/20 text-text-muted text-sm mb-4">
                                 <i class="fa-solid fa-circle-info text-primary mt-0.5"></i>
                                 <span>Uma linha por convite. Colunas: <strong>nome</strong>, <strong>telefone</strong>,
-                                    <strong>faixa_etaria</strong>, <strong>genero</strong> e, até 5 acompanhantes, as
+                                    <strong>faixa_etaria</strong>, <strong>genero</strong> e, até 4 acompanhantes, as
                                     colunas
                                     <strong>acompanhante_1_nome</strong>, <strong>acompanhante_1_faixa_etaria</strong>,
                                     <strong>acompanhante_1_genero</strong> (e assim por diante).
-                                    Para a faixa etária, utilize os valores: "4 a 7 anos", "8 a 12 anos", ou "13 anos ou
+                                    Para a faixa etária, utilize os valores: "0 a 3 anos", "4 a 7 anos", "8 a 12 anos", ou "13 anos ou
                                     mais".</span>
                             </div>
 
@@ -232,8 +232,6 @@
             </div>
 
         </div>
-
-    </main>
 
     </main>
 @endsection
