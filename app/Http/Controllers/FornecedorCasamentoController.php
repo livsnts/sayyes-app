@@ -30,7 +30,6 @@ class FornecedorCasamentoController extends Controller
 
         $pessoas = $casamento->contagemPessoas();
 
-        // ignora o filtro de categoria
         $totalContratado = $casamento->fornecedores()
             ->where('statusFornecedorCasamento', 'CONTRATADO')
             ->sum('valorTotalFornecedorCasamento');
@@ -38,14 +37,10 @@ class FornecedorCasamentoController extends Controller
         $disponivel = $casamento->orcamentoTotal - $totalContratado;
 
         // sugestões herdadas dos fornecedores de confiança do assessor da equipe
-        $sugestoes = collect();
-        if ($casamento->herdaFornecedoresAssessor) {
-            // pega os membros da equipe que são assessores e devolve só os ids deles, depois busca os fornecedores de confiança cujo dono (user_id) está nessa lista
-            $sugestoes = FornecedorConfianca::whereIn('user_id', $casamento->assessores()->pluck('users.id'))
-                ->whereNotIn('id', $casamento->fornecedores()->whereNotNull('fornecedor_confianca_id')->pluck('fornecedor_confianca_id'))
-                ->orderBy('nomeFornecedorConfianca')
-                ->get();
-        }
+        $sugestoes = FornecedorConfianca::whereIn('user_id', $casamento->assessores()->pluck('users.id'))
+            ->whereNotIn('id', $casamento->fornecedores()->whereNotNull('fornecedor_confianca_id')->pluck('fornecedor_confianca_id'))
+            ->orderBy('nomeFornecedorConfianca')
+            ->get();
 
         return view('fornecedores-casamento.index', compact(
             'casamento',
@@ -64,9 +59,9 @@ class FornecedorCasamentoController extends Controller
 
         $dados = $this->validar($request);
 
-        // só aceita o vínculo se o casamento herda E o fornecedor é de um assessor da equipe
+        // só aceita o vínculo se o fornecedor é de um assessor da equipe
         $fornecedorConfiancaId = null;
-        if ($casamento->herdaFornecedoresAssessor && $request->filled('fornecedor_confianca_id')) {
+        if ($request->filled('fornecedor_confianca_id')) {
             $fornecedorConfiancaId = FornecedorConfianca::whereIn('user_id', $casamento->assessores()->pluck('users.id'))
                 ->find($request->fornecedor_confianca_id)?->id;
         }
@@ -111,10 +106,13 @@ class FornecedorCasamentoController extends Controller
             'nomeFornecedorCasamento' => ['required', 'string', 'max:255'],
             'categoriaFornecedorCasamento' => ['required', Rule::enum(CategoriaFornecedor::class)],
             'statusFornecedorCasamento' => ['required', Rule::in(array_keys(FornecedorCasamento::STATUS))],
+            'telefoneFornecedorCasamento' => ['nullable', 'string', 'max:20'],
             'tipoValorFornecedorCasamento' => ['required', Rule::enum(TipoValorFornecedor::class)],
             'valorTotal' => ['required', 'numeric', 'min:0'],
             'valorAdulto' => ['required_if:tipoValorFornecedorCasamento,POR_PESSOA', 'nullable', 'numeric', 'min:0'],
             'valorCrianca' => ['required_if:tipoValorFornecedorCasamento,POR_PESSOA', 'nullable', 'numeric', 'min:0'],
+            'quantidadeAdultos' => ['required_if:tipoValorFornecedorCasamento,POR_PESSOA', 'nullable', 'integer', 'min:0'],
+            'quantidadeCriancas' => ['required_if:tipoValorFornecedorCasamento,POR_PESSOA', 'nullable', 'integer', 'min:0'],
             'observacoesFornecedorCasamento' => ['nullable', 'string', 'max:1000'],
         ], [
             'nomeFornecedorCasamento.required' => 'O nome do fornecedor é obrigatório.',
@@ -125,6 +123,10 @@ class FornecedorCasamentoController extends Controller
             'valorCrianca.required_if' => 'Informe o valor por criança (pode ser R$ 0,00).',
             'valorAdulto.numeric' => 'O valor por adulto deve ser um número.',
             'valorCrianca.numeric' => 'O valor por criança deve ser um número.',
+            'quantidadeAdultos.required_if' => 'Informe a quantidade de adultos (pode ser 0).',
+            'quantidadeCriancas.required_if' => 'Informe a quantidade de crianças (pode ser 0).',
+            'quantidadeAdultos.integer' => 'A quantidade de adultos deve ser um número inteiro.',
+            'quantidadeCriancas.integer' => 'A quantidade de crianças deve ser um número inteiro.',
         ]);
     }
 
@@ -137,7 +139,7 @@ class FornecedorCasamentoController extends Controller
         return str_replace(['R$ ', '.', ','], ['', '', '.'], $valor);
     }
 
-    // guarda só os campos do tipo escolhido; os outros ficam nulos
+    // guarda só os campos do tipo escolhido, os outros ficam nulos
     private function montarDados(array $dados): array
     {
         $porPessoa = $dados['tipoValorFornecedorCasamento'] === TipoValorFornecedor::PorPessoa->value;
@@ -146,10 +148,13 @@ class FornecedorCasamentoController extends Controller
             'nomeFornecedorCasamento' => $dados['nomeFornecedorCasamento'],
             'categoriaFornecedorCasamento' => $dados['categoriaFornecedorCasamento'],
             'statusFornecedorCasamento' => $dados['statusFornecedorCasamento'],
+            'telefoneFornecedorCasamento' => $dados['telefoneFornecedorCasamento'] ?? null,
             'tipoValorFornecedorCasamento' => $dados['tipoValorFornecedorCasamento'],
             'valorTotalFornecedorCasamento' => $dados['valorTotal'],
             'valorAdultoFornecedorCasamento' => $porPessoa ? $dados['valorAdulto'] : null,
             'valorCriancaFornecedorCasamento' => $porPessoa ? $dados['valorCrianca'] : null,
+            'quantidadeAdultosFornecedorCasamento' => $porPessoa ? $dados['quantidadeAdultos'] : null,
+            'quantidadeCriancasFornecedorCasamento' => $porPessoa ? $dados['quantidadeCriancas'] : null,
             'observacoesFornecedorCasamento' => $dados['observacoesFornecedorCasamento'] ?? null,
         ];
     }

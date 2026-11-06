@@ -8,3 +8,9 @@
 - Fazer com que ambos os logins redirecionem para a página inicial
 - Tinha que ter uma data limite pra confirmação
 - convidado-acoes.blade.php não é usado em lugar nenhum
+- CPF não poderia ser unique se não tem como trocar o tipo do usuário
+- Na equipe do casamento, ao buscar o membro, ambos o noivo e a noiva ficam como "NOIVO"
+- Validar se eu adicionar um acompanhante depois altera a quantidadeMaxAcompanhantes
+- IMPORTAR PLANILHA NAO TEM ACOMPANHANTES
+- Tinha que ter uma forma de tirar uma pessoa do casamento
+- Entender melhor o vinculo da herança dos fornecedores de confiança

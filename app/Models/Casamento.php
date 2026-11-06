@@ -16,7 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'localCasamento',
     'descricaoCasamento',
     'imagemCasamento',
-    'urlListaDePresentes'
+    'urlListaDePresentes',
+    'herdaFornecedoresAssessor'
 ])]
 
 class Casamento extends Model

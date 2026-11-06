@@ -106,7 +106,7 @@
                     <p class="text-primary font-semibold text-sm">Lista de convidados</p>
                 </div>
             </a>
-            <a href="{{ route('convidado.index', $casamento) }}">
+            <a href="{{ route('fornecedor-casamento.index', $casamento) }}">
                 <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
                     <img src="{{ asset('images/doodles/brinde.png') }}" alt="Brinde" class="h-24 object-contain">
                     <p class="text-primary font-semibold text-sm">Fornecedores</p>

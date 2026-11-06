@@ -40,7 +40,7 @@
                     class="fa-solid fa-plus"></i></a>
         </form>
 
-        <div class="border-2 border-primary rounded-lg overflow-hidden bg-background">
+        <div class="border-2 border-primary rounded-lg overflow-hidden bg-background text-primary">
             <table class="w-full text-sm">
                 <thead class="bg-primary text-white">
                     <tr>

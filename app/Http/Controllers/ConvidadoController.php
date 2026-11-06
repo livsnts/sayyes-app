@@ -228,7 +228,6 @@ class ConvidadoController extends Controller
         return redirect()->route('convidado.index', $casamento)->with('sucesso', 'Convidado atualizado com sucesso!');
     }
 
-    // Confirmação
     public function confirmar(string $token)
     {
         $convidado = Convidado::with(['casamento', 'acompanhantes']) // eager loading
