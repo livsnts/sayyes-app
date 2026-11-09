@@ -67,6 +67,6 @@ class FornecedorCasamento extends Model
 
     public function pagamentos(): HasMany
     {
-        return $this->hasMany(Pagamento::class);
+        return $this->hasMany(Pagamento::class)->orderBy('numeroParcela');
     }
 }

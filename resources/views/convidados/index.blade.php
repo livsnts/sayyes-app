@@ -125,8 +125,8 @@
         </div>
 
         @foreach ($convidadosFiltrados as $convidado)
-            <x-convidado-detalhes-modal :casamento="$casamento" :convidado="$convidado" />
-            <x-convidado-editar-modal :casamento="$casamento" :convidado="$convidado" />
+            @include('convidados.detalhes-modal', ['casamento' => $casamento, 'convidado' => $convidado])
+            @include('convidados.editar-modal', ['casamento' => $casamento, 'convidado' => $convidado])
         @endforeach
     </main>
 

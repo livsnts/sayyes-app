@@ -16,7 +16,7 @@ class FornecedorCasamentoController extends Controller
     use AuthorizesRequests;
 
     public function index(Request $request, Casamento $casamento)
-    {
+    {       
 
         $this->authorize('view', $casamento);
 
@@ -26,7 +26,7 @@ class FornecedorCasamentoController extends Controller
             $query->where('categoriaFornecedorCasamento', $request->categoria);
         }
 
-        $fornecedores = $query->orderBy('nomeFornecedorCasamento')->get();
+        $fornecedores = $query->with('pagamentos')->orderBy('nomeFornecedorCasamento')->get();
 
         $pessoas = $casamento->contagemPessoas();
 

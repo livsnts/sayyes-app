@@ -3,7 +3,7 @@
 @section('content')
 
     @php
-        $moeda = fn ($valor) => 'R$ ' . number_format($valor, 2, ',', '.');
+        $moeda = fn($valor) => 'R$ ' . number_format($valor, 2, ',', '.');
         $coresStatus = [
             'EM_PESQUISA' => 'bg-primary/10 text-primary',
             'EM_NEGOCIACAO' => 'bg-warning/10 text-warning',
@@ -11,11 +11,11 @@
             'CANCELADO' => 'bg-danger/10 text-danger',
         ];
         // reabre o modal de cadastro se a validação falhou nele (os de edição usam PUT)
-        $abrirCadastro = $errors->any() && old('_method') !== 'PUT';
+        $abrirCadastro = $errors->any() && old('_method') !== 'PUT' && old('totalParcelas') === null;
     @endphp
 
     <main class="page-main-wide"
-        x-data="{ modalEditar: null, modalCadastro: {{ $abrirCadastro ? 'true' : 'false' }} }">
+        x-data="{ modalEditar: null, modalCadastro: {{ $abrirCadastro ? 'true' : 'false' }}, modalParcelas: null }">
 
         <x-breadcrumb-casamento />
 
@@ -74,7 +74,8 @@
             </select>
 
             @if (request('categoria'))
-                <a href="{{ route('fornecedor-casamento.index', $casamento) }}" class="text-primary text-sm underline">Limpar filtro</a>
+                <a href="{{ route('fornecedor-casamento.index', $casamento) }}" class="text-primary text-sm underline">Limpar
+                    filtro</a>
             @endif
         </form>
 
@@ -86,7 +87,7 @@
                         <th class="itens-tabela text-left">Fornecedor</th>
                         <th class="itens-tabela text-left">Categoria</th>
                         <th class="itens-tabela text-left">Status</th>
-                        <th class="itens-tabela text-left">Telefone</th>                      
+                        <th class="itens-tabela text-left">Telefone</th>
                         <th class="itens-tabela text-left">Valor</th>
                         <th class="itens-tabela text-left">Total</th>
                         <th class="itens-tabela text-left">Obs.</th>
@@ -102,9 +103,11 @@
                                     <i class="fa-solid fa-star text-xs" title="Fornecedor de confiança do assessor"></i>
                                 @endif
                             </td>
-                            <td class="itens-tabela text-primary">{{ $fornecedor->categoriaFornecedorCasamento?->value ?? '—' }}</td>
+                            <td class="itens-tabela text-primary">{{ $fornecedor->categoriaFornecedorCasamento?->value ?? '—' }}
+                            </td>
                             <td class="itens-tabela">
-                                <span class="text-xs font-semibold px-3 py-1 rounded-full {{ $coresStatus[$fornecedor->statusFornecedorCasamento] }}">
+                                <span
+                                    class="text-xs font-semibold px-3 py-1 rounded-full {{ $coresStatus[$fornecedor->statusFornecedorCasamento] }}">
                                     {{ \App\Models\FornecedorCasamento::STATUS[$fornecedor->statusFornecedorCasamento] }}
                                 </span>
                             </td>
@@ -113,25 +116,37 @@
                                 @if ($fornecedor->tipoValorFornecedorCasamento === \App\Enums\TipoValorFornecedor::Fixo)
                                     <span class="text-xs text-text-muted">Valor fixo</span>
                                 @else
-                                    {{ $moeda($fornecedor->valorAdultoFornecedorCasamento) }} <span class="text-xs text-text-muted">/ adulto (×{{ $fornecedor->quantidadeAdultosFornecedorCasamento }})</span><br>
-                                    {{ $moeda($fornecedor->valorCriancaFornecedorCasamento) }} <span class="text-xs text-text-muted">/ criança (×{{ $fornecedor->quantidadeCriancasFornecedorCasamento }})</span>
+                                    {{ $moeda($fornecedor->valorAdultoFornecedorCasamento) }} <span
+                                        class="text-xs text-text-muted">/ adulto
+                                        (×{{ $fornecedor->quantidadeAdultosFornecedorCasamento }})</span><br>
+                                    {{ $moeda($fornecedor->valorCriancaFornecedorCasamento) }} <span
+                                        class="text-xs text-text-muted">/ criança
+                                        (×{{ $fornecedor->quantidadeCriancasFornecedorCasamento }})</span>
                                 @endif
                             </td>
                             <td class="itens-tabela font-semibold text-primary">
                                 {{ $moeda($fornecedor->valorTotalFornecedorCasamento) }}
                             </td>
-                            <td class="itens-tabela text-text-muted">{{ $fornecedor->observacoesFornecedorCasamento ?? '—' }}</td>
+                            <td class="itens-tabela text-text-muted">{{ $fornecedor->observacoesFornecedorCasamento ?? '—' }}
+                            </td>
                             <td class="itens-tabela">
                                 <div class="flex gap-1 justify-center">
+                                    @if ($fornecedor->statusFornecedorCasamento === 'CONTRATADO')
+                                        <button type="button" @click="modalParcelas = {{ $fornecedor->id }}"
+                                            class="icone-acao cursor-pointer" title="Parcelas">
+                                            <i class="fa-solid fa-dollar-sign fa-lg"></i>
+                                        </button>
+                                    @endif
                                     <button type="button" @click="modalEditar = {{ $fornecedor->id }}"
-                                        class="icone-acao cursor-pointer">
+                                        class="icone-acao cursor-pointer" title="Editar">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
-                                    <form method="POST" action="{{ route('fornecedor-casamento.destroy', [$casamento, $fornecedor]) }}"
+                                    <form method="POST"
+                                        action="{{ route('fornecedor-casamento.destroy', [$casamento, $fornecedor]) }}"
                                         onsubmit="return confirm('Remover {{ $fornecedor->nomeFornecedorCasamento }}?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="icone-acao cursor-pointer">
+                                        <button type="submit" class="icone-acao cursor-pointer" title="Remover">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>
@@ -153,28 +168,27 @@
         <x-modal show="modalCadastro" onClose="modalCadastro = false">
             <h2 class="titulo text-center mb-4">Adicionar fornecedor</h2>
 
-            <form method="POST" action="{{ route('fornecedor-casamento.store', $casamento) }}"
-                 x-data="{
-                    nome: @js(old('nomeFornecedorCasamento', '')),
-                    categoria: @js(old('categoriaFornecedorCasamento', '')),
-                    telefone: @js(old('telefoneFornecedorCasamento', '')),
-                    tipo: @js(old('tipoValorFornecedorCasamento', 'FIXO')),
-                    confiancaId: '',
-                    adulto: '',
-                    crianca: '',
-                    qtdAdultos: '',
-                    qtdCriancas: '',
-                    total: '',
-                    paraNumero(valor) {
-                        return parseFloat((valor || '').replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-                    },
-                    calcularTotal() {
-                        if (this.tipo !== 'POR_PESSOA') { return; }
-                        const soma = this.paraNumero(this.adulto) * (parseInt(this.qtdAdultos) || 0)
-                            + this.paraNumero(this.crianca) * (parseInt(this.qtdCriancas) || 0);
-                        this.total = 'R$ ' + soma.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    }
-                }"
+            <form method="POST" action="{{ route('fornecedor-casamento.store', $casamento) }}" x-data="{
+                            nome: @js(old('nomeFornecedorCasamento', '')),
+                            categoria: @js(old('categoriaFornecedorCasamento', '')),
+                            telefone: @js(old('telefoneFornecedorCasamento', '')),
+                            tipo: @js(old('tipoValorFornecedorCasamento', 'FIXO')),
+                            confiancaId: '',
+                            adulto: '',
+                            crianca: '',
+                            qtdAdultos: '',
+                            qtdCriancas: '',
+                            total: '',
+                            paraNumero(valor) {
+                                return parseFloat((valor || '').replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+                            },
+                            calcularTotal() {
+                                if (this.tipo !== 'POR_PESSOA') { return; }
+                                const soma = this.paraNumero(this.adulto) * (parseInt(this.qtdAdultos) || 0)
+                                    + this.paraNumero(this.crianca) * (parseInt(this.qtdCriancas) || 0);
+                                this.total = 'R$ ' + soma.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                            }
+                        }"
                 x-init="['adulto', 'crianca', 'qtdAdultos', 'qtdCriancas'].forEach(campo => $watch(campo, () => calcularTotal()))">
                 @csrf
                 <input type="hidden" name="fornecedor_confianca_id" x-model="confiancaId">
@@ -219,8 +233,9 @@
 
                 <div class="flex flex-col gap-2 mt-4">
                     <label for="telefoneFornecedorCasamento" class="text-primary">Telefone</label>
-                    <input type="text" id="telefoneFornecedorCasamento" name="telefoneFornecedorCasamento" x-model="telefone"
-                        x-mask="(99) 99999-9999" inputmode="numeric" placeholder="(11) 94002-8922" class="field-input">
+                    <input type="text" id="telefoneFornecedorCasamento" name="telefoneFornecedorCasamento"
+                        x-model="telefone" x-mask="(99) 99999-9999" inputmode="numeric" placeholder="(11) 94002-8922"
+                        class="field-input">
                 </div>
 
                 <div class="flex flex-col gap-2 mt-4">
@@ -298,7 +313,12 @@
 
         {{-- Modais de edição (um por fornecedor) --}}
         @foreach ($fornecedores as $fornecedor)
-            <x-fornecedor-casamento-editar-modal :casamento="$casamento" :fornecedor="$fornecedor" :pessoas="$pessoas" />
+            @include('fornecedores-casamento.editar-modal', ['casamento' => $casamento, 'fornecedor' => $fornecedor, 'pessoas' => $pessoas])
+        @endforeach
+
+        {{-- Modais de parcelas (um por fornecedor contratado) --}}
+        @foreach ($fornecedores->where('statusFornecedorCasamento', 'CONTRATADO') as $fornecedor)
+            @include('fornecedores-casamento.parcelas-modal', ['casamento' => $casamento, 'fornecedor' => $fornecedor])
         @endforeach
     </main>
 

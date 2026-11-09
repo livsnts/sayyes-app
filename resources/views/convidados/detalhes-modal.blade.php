@@ -1,5 +1,3 @@
-@props(['casamento', 'convidado'])
-
 <x-modal show="modalDetalhes === {{ $convidado->id }}" onClose="modalDetalhes = null">
     <h3 class="titulo text-center mb-4">Detalhes do convidado</h3>
 

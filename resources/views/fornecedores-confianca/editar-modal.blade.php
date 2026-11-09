@@ -1,5 +1,3 @@
-@props(['fornecedor'])
-
 <x-modal show="modalEditar === {{ $fornecedor->id }}" onClose="modalEditar = null">
     <h2 class="titulo text-center mb-4">Editar fornecedor</h2>
 

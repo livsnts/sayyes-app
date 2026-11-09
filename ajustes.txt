@@ -1,4 +1,3 @@
-- Tem dump() esquecido no código. auth/forgot-password.blade.php e auth/reset-password.blade.php têm a linha @php dump(session()->all()) @endphp, que despeja os dados da sessão na tela. Remova as duas linhas, porque a banca pode abrir essas telas. Nos dois arquivos, o bloco @if(session()->has('status')) está fora do @section('content'), então a mensagem “link enviado” nunca aparece. Mova-o para dentro da section.
 - A senha tem limite máximo de 14 caracteres. Isso está no store e nos atributos maxlength do formulário. Limitar o tamanho máximo é considerado má prática, porque senhas longas são mais seguras. Além disso, a redefinição só exige mínimo de 8, sem as regras de maiúscula, número e símbolo do cadastro. Se você ajustar isso, atualize o segundo parágrafo.
 - O e-mail de redefinição depende da configuração de e-mail. O código usa o envio padrão do Laravel, mas não vi o .env. Se o ambiente de demonstração usar o driver log, o e-mail não chega à caixa de entrada. Teste o fluxo completo antes de afirmar no artigo que o usuário “recebe uma mensagem”. O arquivo Mail/Password.php é um esqueleto gerado e não é usado.
 - Noivos podem cadastrar mais de um casamento
@@ -14,3 +13,7 @@
 - IMPORTAR PLANILHA NAO TEM ACOMPANHANTES
 - Tinha que ter uma forma de tirar uma pessoa do casamento
 - Entender melhor o vinculo da herança dos fornecedores de confiança
+- PÁGINA INICIAL
+- Genero dos convidados está sem uso
+- Faixa etária calcula criança
+- Mudar componentes para include (tirar modal de cadastro do fornecedor do index e passar pra outra view)

@@ -1,5 +1,3 @@
-@props(['casamento', 'fornecedor', 'pessoas'])
-
 @php
     // sem "R$ " no início, igual à tela de editar casamento; a máscara coloca o prefixo
     $formatar = fn($valor) => $valor !== null ? number_format($valor, 2, ',', '.') : '';

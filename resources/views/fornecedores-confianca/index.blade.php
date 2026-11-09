@@ -116,7 +116,7 @@
         </x-modal>
 
         @foreach ($fornecedores as $fornecedor)
-            <x-fornecedor-confianca-editar-modal :fornecedor="$fornecedor" />
+            @include('fornecedores-confianca.editar-modal', ['fornecedor' => $fornecedor])
         @endforeach
     </main>
 

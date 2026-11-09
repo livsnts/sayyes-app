@@ -8,6 +8,7 @@ use App\Http\Controllers\ConvidadoController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\FornecedorConfiancaController;
 use App\Http\Controllers\FornecedorCasamentoController;
+use App\Http\Controllers\PagamentoController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -68,6 +69,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/casamentos/{casamento}/fornecedores/{fornecedor}', [FornecedorCasamentoController::class, 'update'])->name('fornecedor-casamento.update');
     Route::delete('/casamentos/{casamento}/fornecedores/{fornecedor}', [FornecedorCasamentoController::class, 'destroy'])->name('fornecedor-casamento.destroy');
 
+    // ---- Parcelas (pagamentos) do fornecedor ----
+    Route::post('/casamentos/{casamento}/fornecedores/{fornecedor}/parcelas', [PagamentoController::class, 'gerar'])->name('pagamento.gerar');
+    Route::delete('/casamentos/{casamento}/fornecedores/{fornecedor}/parcelas', [PagamentoController::class, 'reiniciar'])->name('pagamento.reiniciar');
+    Route::patch('/casamentos/{casamento}/fornecedores/{fornecedor}/parcelas/{pagamento}/pagar', [PagamentoController::class, 'pagar'])->name('pagamento.pagar');
+    Route::patch('/casamentos/{casamento}/fornecedores/{fornecedor}/parcelas/{pagamento}/desfazer', [PagamentoController::class, 'desfazer'])->name('pagamento.desfazer');
 });
 
 // ------ confirmação de presença via token --------

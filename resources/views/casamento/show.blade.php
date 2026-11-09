@@ -80,7 +80,7 @@
         </x-card-sketch>
 
         {{-- Ações rápidas --}}
-        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 mb-6">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-6">
             <a href="{{ route('casamento.equipe', $casamento) }}">
                 <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
                     <img src="{{ asset('images/doodles/passaros.png') }}" alt="Passaros"
@@ -110,12 +110,6 @@
                 <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
                     <img src="{{ asset('images/doodles/brinde.png') }}" alt="Brinde" class="h-24 object-contain">
                     <p class="text-primary font-semibold text-sm">Fornecedores</p>
-                </div>
-            </a>
-            <a href="{{ route('convidado.index', $casamento) }}">
-                <div class="card-acao flex flex-col items-center gap-2 hover:opacity-70 transition cursor-pointer">
-                    <img src="{{ asset('images/doodles/grafico-pizza.png') }}" alt="Gráfico" class="h-24 object-contain">
-                    <p class="text-primary font-semibold text-sm">Finanças</p>
                 </div>
             </a>
         </div>

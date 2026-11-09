@@ -128,18 +128,22 @@ casamento_id (FK)*, fornecedor_confianca_id (FK, opcional)
 > **Quando o total é recalculado.** O total só é refeito (no navegador, via Alpine.js) quando o usuário altera um dos quatro campos de valor unitário ou quantidade. Abrir ou editar outros dados do fornecedor não muda o total, e ele **não** acompanha a lista de convidados. O formulário apenas exibe um lembrete em texto com o número atual de convidados adultos e crianças (bebês e recusados não entram na contagem).  
 > **Status e totais.** Todos os status continuam disponíveis no cadastro. Apenas fornecedores `CONTRATADO` entram no card "Contratado" e são descontados do "Disponível" (`orcamentoTotal` − soma dos totais contratados).  
 > **Herança do assessor.** Se houver um assessor na equipe do casamento, o modal de cadastro oferece automaticamente, sem nenhuma configuração, um dropdown "Puxar do assessor" com os fornecedores de confiança dos assessores da equipe que ainda não foram adicionados ao casamento. Nome, categoria e telefone são **copiados** para o `FornecedorCasamento`, e `fornecedor_confianca_id` guarda só a origem; alterar o catálogo do assessor depois não afeta casamentos já cadastrados. O servidor só aceita o vínculo se o fornecedor pertencer a um assessor da equipe.  
-> `totalParcelas` é o número de parcelas em que o fornecedor será pago. Fica em `FornecedorCasamento` e se relaciona com `Pagamento`, que guarda cada parcela (`numeroParcela`). O campo ainda não aparece no cadastro de fornecedor; será usado no módulo de pagamentos.  
+> `totalParcelas` é o número de parcelas em que o fornecedor será pago. Fica em `FornecedorCasamento` e se relaciona com `Pagamento`, que guarda cada parcela (`numeroParcela`). Não aparece no cadastro do fornecedor: é informado no modal de parcelas e gravado quando as parcelas são geradas (ver "Pagamento").  
 > `contratoFornecedorCasamento` guarda o **caminho** do PDF do contrato (opcional), armazenado em disco via Storage — não o conteúdo do arquivo.  
 > A entidade `OrcamentoFornecedor` foi descartada: o ciclo de vida do fornecedor é controlado apenas pelo status.
 
 #### Pagamento (parcelas do fornecedor)
 ```
-id (PK), statusPagamento (PENDENTE | PAGO | ATRASADO)*,
+id (PK), statusPagamento (PENDENTE | PAGO)*,
 valorParcela* (DECIMAL 10,2), dataVencimento, dataPagamento,
 numeroParcela, observacao,
 fornecedor_casamento_id (FK)*
 ```
-> O status `ATRASADO` é **calculado em tempo real via PHP** (comparando `dataVencimento` com a data atual), não armazenado no banco.
+> O status `ATRASADO` é **calculado em tempo real via PHP** (método `Pagamento::statusReal()`: parcela não paga com `dataVencimento` anterior à data atual), não armazenado no banco. Por isso a coluna só aceita `PENDENTE` e `PAGO`.  
+> **Geração das parcelas.** No modal "Parcelas" da tela de fornecedores (botão disponível só para fornecedores `CONTRATADO`), o usuário informa o número de parcelas (1 a 60) e o vencimento da primeira. O sistema divide o `valorTotalFornecedorCasamento` em parcelas iguais, calculando em **centavos inteiros** para não perder dinheiro no arredondamento; a última parcela absorve a sobra (ex.: R$ 1.000,00 em 3× = 333,33 + 333,33 + 333,34). Os vencimentos são mensais, no mesmo dia (`addMonthsNoOverflow`, de modo que 31/01 vira 28/02 e não 03/03). A criação das parcelas e a gravação de `totalParcelas` ocorrem em uma transação (tudo ou nada). Só é possível gerar se o fornecedor ainda não tem parcelas.  
+> **Registro de pagamento.** Cada parcela pode ser marcada como paga (grava `PAGO` e `dataPagamento`, que por padrão é hoje e não pode ser futura) e o pagamento pode ser desfeito (volta a `PENDENTE` e zera a data). "Refazer parcelas" apaga todas as parcelas do fornecedor, com confirmação, para gerar novas.  
+> **Segurança.** Toda ação no `PagamentoController` verifica a permissão sobre o casamento e que o fornecedor pertence ao casamento e a parcela ao fornecedor, evitando acesso a dados de outro casamento trocando IDs na URL.  
+> **Rotas** (nomes): `pagamento.gerar` (POST), `pagamento.reiniciar` (DELETE), `pagamento.pagar` e `pagamento.desfazer` (PATCH), todas aninhadas em `/casamentos/{casamento}/fornecedores/{fornecedor}/parcelas`.
 
 ### Relacionamentos (diagrama entidade-relacionamento)
 
@@ -151,7 +155,7 @@ fornecedor_casamento_id (FK)*
 | Convidado — Acompanhante | 1:N | |
 | Casamento — FornecedorCasamento | 1:N | |
 | FornecedorConfianca — FornecedorCasamento | 1:N, **opcional** | `fornecedor_confianca_id` guarda só a origem quando o fornecedor foi puxado do assessor. |
-| FornecedorCasamento — Pagamento | 1:N | Cada parcela é um `Pagamento`; `totalParcelas` indica quantas existem. |
+| FornecedorCasamento — Pagamento | 1:N | Cada parcela é um `Pagamento`; `totalParcelas` indica quantas existem. Ao excluir o fornecedor, suas parcelas são excluídas em cascata. |
 
 ---
 
@@ -218,6 +222,11 @@ fornecedor_casamento_id (FK)*
 | Herança de fornecedores do assessor por cópia | Nome, categoria e telefone do fornecedor de confiança são copiados ao cadastrar; `fornecedor_confianca_id` registra a origem. O dropdown aparece automaticamente quando há um assessor na equipe do casamento, sem opção de ativar ou desativar. |
 | Categorias de fornecedor via enum PHP | `App\Enums\CategoriaFornecedor` centraliza a lista (compartilhada pelas duas entidades de fornecedor), alimenta dropdown, filtro e validação. |
 | Contrato em PDF opcional via Storage | Caminho do arquivo no banco (`string`), arquivo em disco. Evita inchar o banco com BLOBs; prática padrão do Laravel. |
+| Parcelas geradas em centavos inteiros | Dividir valores decimais (`float`) acumula erro de arredondamento e a soma das parcelas pode divergir do total. Com inteiros a divisão é exata e a última parcela absorve a sobra. |
+| Parcelas iguais, vencimento mensal e "congeladas" | A geração é automática e simples (valor igual, mesmo dia de cada mês). Depois de geradas, as parcelas não acompanham mudanças no valor do fornecedor: o modal avisa quando a soma diverge do total e "Refazer parcelas" recalcula. |
+| Geração de parcelas em transação | `DB::transaction` garante que as parcelas e o `totalParcelas` sejam gravados juntos ou nenhum, sem deixar o fornecedor com parcelas incompletas. |
+| Parcelas só para fornecedor `CONTRATADO` | O botão de parcelas só aparece para fornecedores contratados, pois só eles representam um compromisso de pagamento. |
+| Modais específicos de tela como `@include` | Blocos usados em uma única página (cadastro, edição, detalhes, parcelas) ficam em `resources/views/<funcionalidade>/` e são incluídos com `@include`; `components/` guarda só elementos genéricos e reutilizáveis (botão, campo, modal, etc.). |
 
 ---
 
@@ -250,6 +259,7 @@ fornecedor_casamento_id (FK)*
 - Módulo de mensagens internas não implementado nesta versão.
 - Orçamento detalhado por categoria não implementado (apenas meta global + total por fornecedor); fica como evolução futura. A comparação "estimado × contratado" por fornecedor também fica como evolução futura.
 - O total de um fornecedor cobrado por pessoa não é recalculado automaticamente quando a lista de convidados muda; o usuário precisa atualizar o fornecedor manualmente (o formulário exibe apenas um lembrete com o número atual de convidados).
+- As parcelas de um fornecedor não são recalculadas quando o valor total dele muda depois de geradas; o usuário precisa usar "Refazer parcelas" (o modal exibe um aviso quando a soma das parcelas diverge do total). Também não há edição individual de valor ou vencimento de uma parcela, nem parcelas de valores diferentes; fica como evolução futura.
 - Convidado ou acompanhante sem faixa etária preenchida conta como adulto nas contagens.
 - Integração com WhatsApp é apenas via link `wa.me`, sem API oficial.
 - O link de confirmação de presença, se compartilhado, permite que terceiros alterem a confirmação do convidado — risco aceitável dado o baixo impacto (não há dado sensível nem financeiro envolvido).
