@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-    @if(session()->has('status'))
-        <span class="mb-4 text text-success">
-            {{ session()->get('status') }}
-        </span>
-    @endif
+@if(session()->has('status'))
+    <span class="mb-4 text text-success">
+        {{ session()->get('status') }}
+    </span>
+@endif
 
 @section('content')
 
@@ -24,14 +24,9 @@
                     @enderror
                     <x-input label="E-mail" name="email" type="email" />
 
-                    @error('password')
-                        <div class="mb-4 mt-2 px-4 py-3 rounded-lg bg-danger/10 border border-danger text-danger text-sm">
-                            {{ $message }}
-                        </div>
-                    @enderror
-
-                    <x-input label="Senha" name="password" type="password" />
-                    <x-input label="Confirmar senha" name="password_confirmation" type="password" />
+                    <x-input label="Senha" name="password" type="password" minlength="8" maxlength="14" required />
+                    <x-input label="Confirmar senha" name="password_confirmation" type="password" minlength="8"
+                        maxlength="14" required />
 
                     <x-button type="submit" class="py-3 mt-6 w-full">
                         Alterar senha

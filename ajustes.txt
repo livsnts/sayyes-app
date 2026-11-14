@@ -1,9 +1,5 @@
-- A senha tem limite máximo de 14 caracteres. Isso está no store e nos atributos maxlength do formulário. Limitar o tamanho máximo é considerado má prática, porque senhas longas são mais seguras. Além disso, a redefinição só exige mínimo de 8, sem as regras de maiúscula, número e símbolo do cadastro. Se você ajustar isso, atualize o segundo parágrafo.
-- O e-mail de redefinição depende da configuração de e-mail. O código usa o envio padrão do Laravel, mas não vi o .env. Se o ambiente de demonstração usar o driver log, o e-mail não chega à caixa de entrada. Teste o fluxo completo antes de afirmar no artigo que o usuário “recebe uma mensagem”. O arquivo Mail/Password.php é um esqueleto gerado e não é usado.
-- Noivos podem cadastrar mais de um casamento
-- Faltam todos os relatórios
+- Noivos podem desativar um casamento, cadastrar um outro depois alterar o status do casamento inativo para ativo e ficar com dois ativos
 - Precisava ter como desvincular a pessoa do casamento
-- Textos do campo da senha estão em inglês e a tela volta tudo ao começo
 - Tinha que ter uma data limite pra confirmação
 - convidado-acoes.blade.php não é usado em lugar nenhum
 - CPF não poderia ser unique se não tem como trocar o tipo do usuário
@@ -14,3 +10,4 @@
 - Genero dos convidados está sem uso
 - Faixa etária calcula criança
 - Valor pago na tela de fornecedores do casamento
+- Lembrar onde fica a lógica de mostragem de "Meu casamento" e "Criar casamento" na navbar

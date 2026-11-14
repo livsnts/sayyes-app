@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class PasswordResetController extends Controller
 {
@@ -25,9 +26,18 @@ class PasswordResetController extends Controller
             $request->only('email')
         );
 
-        return $status === Password::ResetLinkSent
-            ? back()->with(['status' => __($status)])
-            : back()->withErrors(['email' => __($status)]);
+        if ($status === Password::ResetLinkSent) {
+            return back()->with('sucesso', 'Enviamos o link de redefinição de senha para o seu e-mail.');
+        }
+
+        $mensagens = [
+            Password::InvalidUser => 'Não encontramos um usuário com esse e-mail.',
+            Password::ResetThrottled => 'Aguarde alguns instantes antes de tentar novamente.',
+        ];
+
+        return back()->withErrors([
+            'email' => $mensagens[$status] ?? 'Não foi possível enviar o link. Tente novamente.',
+        ]);
     }
 
     public function resetForm(string $token)
@@ -37,11 +47,22 @@ class PasswordResetController extends Controller
 
     public function reset(Request $request)
     {
-        $request->validate([
-            'token'    => 'required',
-            'email'    => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
+        $request->validate(
+            [
+                'token' => 'required',
+                'email' => 'required|email',
+                'password' => ['required', 'confirmed', PasswordRule::min(8)->max(14)->mixedCase()->numbers()->symbols()],
+            ],
+            [
+                'password.required' => 'A senha é obrigatória.',
+                'password.confirmed' => 'As senhas não coincidem.',
+                'password.min' => 'A senha deve ter no mínimo 8 caracteres.',
+                'password.max' => 'A senha deve ter no máximo 14 caracteres.',
+                'password.mixed' => 'A senha deve conter letras maiúsculas e minúsculas.',
+                'password.numbers' => 'A senha deve conter pelo menos um número.',
+                'password.symbols' => 'A senha deve conter pelo menos um símbolo.',
+            ]
+        );
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
@@ -57,7 +78,7 @@ class PasswordResetController extends Controller
         );
 
         return $status === Password::PasswordReset
-            ? redirect()->route('login')->with('status', __($status))
-            : back()->withErrors(['email' => [__($status)]]);
+            ? redirect()->route('login')->with('sucesso', 'Senha redefinida com sucesso! Faça login.')
+            : back()->withErrors(['email' => 'Link inválido ou expirado. Solicite um novo.']);
     }
 }
