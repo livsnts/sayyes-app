@@ -10,6 +10,8 @@
             <div class="page-header-title-row">
                 <img src="{{ asset('images/doodles/listas.png') }}" alt="Convite" class="page-header-doodle">
                 <h1 class="titulo">Lista de Convidados</h1>
+                <a href="{{ route('convidado.create', $casamento) }}" class="botao-detalhes"><i
+                    class="fa-solid fa-plus"></i></a>
             </div>
             <p class="text-text-muted">
                 Visualize quem estará no <strong class="text-primary">{{ $casamento->nomeCasamento }} </strong> </p>
@@ -35,9 +37,11 @@
             </div>
 
             <button type="submit" class="botao-detalhes cursor-pointer"><i
-                    class="fa-solid fa-magnifying-glass"></i></button>
-            <a href="{{ route('convidado.create', $casamento) }}" class="botao-detalhes"><i
-                    class="fa-solid fa-plus"></i></a>
+                    class="fa-solid fa-magnifying-glass"></i></button>            
+            <a href="{{ route('convidado.relatorio', array_merge(['casamento' => $casamento], request()->query())) }}"
+                class="botao-detalhes" title="Baixar como planilha Excel">
+                <i class="fa-solid fa-file-arrow-down"></i>
+            </a>
         </form>
 
         <div class="border-2 border-primary rounded-lg overflow-hidden bg-background text-primary">

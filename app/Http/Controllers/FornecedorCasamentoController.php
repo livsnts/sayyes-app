@@ -16,7 +16,7 @@ class FornecedorCasamentoController extends Controller
     use AuthorizesRequests;
 
     public function index(Request $request, Casamento $casamento)
-    {       
+    {
 
         $this->authorize('view', $casamento);
 
@@ -159,7 +159,29 @@ class FornecedorCasamentoController extends Controller
         ];
     }
 
+    public function relatorio(Request $request, Casamento $casamento)
+    {
+        $this->authorize('view', $casamento);
 
+        $query = $casamento->fornecedores();
+
+        if ($request->filled('categoria')) {
+            $query->where('categoriaFornecedorCasamento', $request->categoria);
+        }
+
+        $cabecalhos = ['Fornecedor', 'Categoria', 'Status', 'Telefone', 'Valor total (R$)', 'Observações'];
+
+        $linhas = $query->orderBy('nomeFornecedorCasamento')->get()->map(fn($f) => [
+            $f->nomeFornecedorCasamento,
+            $f->categoriaFornecedorCasamento?->value,
+            FornecedorCasamento::STATUS[$f->statusFornecedorCasamento] ?? $f->statusFornecedorCasamento,
+            $f->telefoneFornecedorCasamento,
+            number_format($f->valorTotalFornecedorCasamento ?? 0, 2, ',', '.'),
+            $f->observacoesFornecedorCasamento,
+        ])->all();
+
+        return $this->baixarRelatorio('Fornecedores de confiança', $cabecalhos, $linhas);
+    }
 }
 
 

@@ -46,6 +46,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/casamentos/{casamento}/buscar-usuario', [CasamentoController::class, 'buscarUsuario'])->name('casamento.buscar-usuario');
     Route::post('/casamentos/{casamento}/adicionar-membro', [CasamentoController::class, 'adicionarMembro'])->name('casamento.adicionar-membro');
 
+    Route::get('/casamentos/{casamento}/convidados/relatorio', [ConvidadoController::class, 'relatorio'])->name('convidado.relatorio');
+    Route::get('/casamentos/{casamento}/fornecedores/relatorio', [FornecedorCasamentoController::class, 'relatorio'])->name('fornecedor-casamento.relatorio');
+    Route::get('/fornecedores-confianca/relatorio', [FornecedorConfiancaController::class, 'relatorio'])->name('fornecedor-confianca.relatorio');
+
     // ---- Convidados ----
     Route::get('/casamentos/{casamento}/convidados', [ConvidadoController::class, 'index'])->name('convidado.index');
     Route::get('/casamentos/{casamento}/convidados/criar', [ConvidadoController::class, 'create'])->name('convidado.create');
@@ -55,7 +59,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/casamentos/{casamento}/convidados/{convidado}/editar', [ConvidadoController::class, 'edit'])->name('convidado.edit');
     Route::put('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'update'])->name('convidado.update');
     Route::delete('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'destroy'])->name('convidado.destroy');
-
 
     // ---- Fornecedores de confiança ----
     Route::get('/fornecedores-confianca', [FornecedorConfiancaController::class, 'index'])->name('fornecedor-confianca.index');

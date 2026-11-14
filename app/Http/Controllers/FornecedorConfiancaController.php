@@ -76,5 +76,28 @@ class FornecedorConfiancaController extends Controller
         return back()->with('sucesso', 'Fornecedor removido com sucesso!');
     }
 
+    public function relatorio(Request $request)
+    {
+
+        abort_unless(auth()->user()->tipoUsuario === 'ASSESSOR', 403);
+
+        $query = auth()->user()->fornecedoresConfianca();
+
+        if ($request->filled('categoria')) {
+            $query->where('categoriaFornecedorConfianca', $request->categoria);
+        }
+
+        $cabecalhos = ['Nome', 'Categoria', 'Telefone', 'Instagram'];
+
+        $linhas = $query->orderBy('nomeFornecedorConfianca')->get()->map(fn($f) => [
+            $f->nomeFornecedorConfianca,
+            $f->categoriaFornecedorConfianca?->value,
+            $f->telefoneFornecedorConfianca,
+            $f->instagramFornecedorConfianca,
+        ])->all();
+
+        return $this->baixarRelatorio('Fornecedores de confiança', $cabecalhos, $linhas);
+    }
+
 }
 ?>

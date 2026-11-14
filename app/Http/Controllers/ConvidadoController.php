@@ -276,4 +276,43 @@ class ConvidadoController extends Controller
             : 'Resposta registrada. Obrigado por avisar!'
         );
     }
+
+    public function relatorio(Casamento $casamento, Request $request)
+    {
+        $this->authorize('view', $casamento);
+
+        $query = $casamento->convidados()->with('acompanhantes');
+
+        if ($request->filled('status')) {
+            $status = $request->status;
+
+            $query->where(function ($q) use ($status) {
+                $q->where('statusConvidado', $status)
+                    ->orWhereHas('acompanhantes', fn($a) => $a->where('statusAcompanhante', $status));
+            });
+        }
+
+        if ($request->filled('busca')) {
+            $query->where('nomeConvidado', 'like', '%' . $request->busca . '%');
+        }
+
+        $cabecalhos = ['ID', 'Nome', 'Telefone', 'Confirmados', 'Pendentes', 'Recusados', 'Acompanhantes'];
+
+        $linhas = $query->orderBy('nomeConvidado')->get()->map(function ($convidado) {
+            $contagem = $convidado->contagemPorStatus();
+
+            return [
+                $convidado->id,
+                $convidado->nomeConvidado,
+                $convidado->telefoneConvidado,
+                $contagem['CONFIRMADO'],
+                $contagem['PENDENTE'],
+                $contagem['RECUSADO'],
+                $convidado->acompanhantes->pluck('nomeAcompanhante')->join(', '),
+            ];
+        })->all();
+
+        return $this->baixarRelatorio('Convidados', $cabecalhos, $linhas);
+    }
+
 }

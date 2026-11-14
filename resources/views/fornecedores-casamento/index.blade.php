@@ -77,7 +77,14 @@
                 <a href="{{ route('fornecedor-casamento.index', $casamento) }}" class="text-primary text-sm underline">Limpar
                     filtro</a>
             @endif
+
+            <a href="{{ route('fornecedor-casamento.relatorio', array_merge(['casamento' => $casamento], request()->query())) }}"
+                class="botao-detalhes w-fit inline-flex ml-auto" title="Baixar como planilha Excel">
+                <i class="fa-solid fa-file-arrow-down"></i>
+            </a>
         </form>
+
+
 
         {{-- Tabela de fornecedores --}}
         <div class="border-2 border-primary rounded-2xl overflow-hidden bg-background">
@@ -169,26 +176,26 @@
             <h2 class="titulo text-center mb-4">Adicionar fornecedor</h2>
 
             <form method="POST" action="{{ route('fornecedor-casamento.store', $casamento) }}" x-data="{
-                            nome: @js(old('nomeFornecedorCasamento', '')),
-                            categoria: @js(old('categoriaFornecedorCasamento', '')),
-                            telefone: @js(old('telefoneFornecedorCasamento', '')),
-                            tipo: @js(old('tipoValorFornecedorCasamento', 'FIXO')),
-                            confiancaId: '',
-                            adulto: '',
-                            crianca: '',
-                            qtdAdultos: '',
-                            qtdCriancas: '',
-                            total: '',
-                            paraNumero(valor) {
-                                return parseFloat((valor || '').replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-                            },
-                            calcularTotal() {
-                                if (this.tipo !== 'POR_PESSOA') { return; }
-                                const soma = this.paraNumero(this.adulto) * (parseInt(this.qtdAdultos) || 0)
-                                    + this.paraNumero(this.crianca) * (parseInt(this.qtdCriancas) || 0);
-                                this.total = 'R$ ' + soma.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                            }
-                        }"
+                                            nome: @js(old('nomeFornecedorCasamento', '')),
+                                            categoria: @js(old('categoriaFornecedorCasamento', '')),
+                                            telefone: @js(old('telefoneFornecedorCasamento', '')),
+                                            tipo: @js(old('tipoValorFornecedorCasamento', 'FIXO')),
+                                            confiancaId: '',
+                                            adulto: '',
+                                            crianca: '',
+                                            qtdAdultos: '',
+                                            qtdCriancas: '',
+                                            total: '',
+                                            paraNumero(valor) {
+                                                return parseFloat((valor || '').replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+                                            },
+                                            calcularTotal() {
+                                                if (this.tipo !== 'POR_PESSOA') { return; }
+                                                const soma = this.paraNumero(this.adulto) * (parseInt(this.qtdAdultos) || 0)
+                                                    + this.paraNumero(this.crianca) * (parseInt(this.qtdCriancas) || 0);
+                                                this.total = 'R$ ' + soma.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                            }
+                                        }"
                 x-init="['adulto', 'crianca', 'qtdAdultos', 'qtdCriancas'].forEach(campo => $watch(campo, () => calcularTotal()))">
                 @csrf
                 <input type="hidden" name="fornecedor_confianca_id" x-model="confiancaId">
@@ -290,7 +297,7 @@
                     </div>
                 </div>
 
-                {{-- total: sempre visível e editável --}}
+                {{-- total --}}
                 <div class="flex flex-col gap-2 mt-4">
                     <label for="valorTotal" class="text-primary">Valor total*</label>
                     <input type="text" id="valorTotal" name="valorTotal" inputmode="numeric" x-model="total"

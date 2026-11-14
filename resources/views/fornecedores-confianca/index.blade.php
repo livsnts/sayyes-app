@@ -20,7 +20,9 @@
 
         <form method="GET" action="{{ route('fornecedor-confianca.index') }}" class="flex items-center gap-2 mb-4">
             <label for="categoria" class="text-primary text-sm">Filtrar por categoria:</label>
-            <select id="categoria" name="categoria" class="w-58 px-4 py-3 rounded-lg border-2 border-primary bg-transparent outline-none" onchange="this.form.submit()">
+            <select id="categoria" name="categoria"
+                class="w-58 px-4 py-3 rounded-lg border-2 border-primary bg-transparent outline-none"
+                onchange="this.form.submit()">
                 <option value="">Todas as categorias</option>
                 @foreach (\App\Enums\CategoriaFornecedor::cases() as $categoria)
                     <option value="{{ $categoria->value }}" @selected(request('categoria') === $categoria->value)>
@@ -32,6 +34,11 @@
             @if (request('categoria'))
                 <a href="{{ route('fornecedor-confianca.index') }}" class="text-primary text-sm underline">Limpar filtro</a>
             @endif
+
+            <a href="{{ route('fornecedor-confianca.relatorio', request()->query()) }}" class="botao-detalhes ml-auto"
+                title="Baixar como planilha Excel">
+                <i class="fa-solid fa-file-arrow-down"></i>
+            </a>
         </form>
 
         <div class="border-2 border-primary rounded-2xl overflow-hidden bg-background">
