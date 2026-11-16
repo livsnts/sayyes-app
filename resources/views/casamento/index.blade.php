@@ -76,12 +76,12 @@
                                 </div>
 
                                 <span class="text-xs font-semibold px-3 py-1 rounded-full
-                                                                        @if ($casamento->statusCasamento === 'ATIVO') bg-success/10 text-success
-                                                                        @elseif ($casamento->statusCasamento === 'REALIZADO') bg-primary/10 text-primary
-                                                                        @elseif ($casamento->statusCasamento === 'CANCELADO') bg-danger/10 text-danger
-                                                                        @else bg-warning/10 text-warning
-                                                                        @endif
-                                                                    ">
+                                                                                    @if ($casamento->statusCasamento === 'ATIVO') bg-success/10 text-success
+                                                                                    @elseif ($casamento->statusCasamento === 'REALIZADO') bg-primary/10 text-primary
+                                                                                    @elseif ($casamento->statusCasamento === 'CANCELADO') bg-danger/10 text-danger
+                                                                                    @else bg-warning/10 text-warning
+                                                                                    @endif
+                                                                                ">
                                     {{ ucfirst(strtolower($casamento->statusCasamento)) }}
                                 </span>
 
@@ -92,11 +92,13 @@
             </div>
         @endif
 
-        <div class="flex justify-center mt-6">
-            <a href="{{ route('casamento.create') }}">
-                <x-button><i class="fa fa-plus mr-2" aria-hidden="true"></i> Novo casamento</x-button>
-            </a>
-        </div>
+        @unless ($noivoTemCasamentoAtivo)
+            <div class="flex justify-center mt-6">
+                <a href="{{ route('casamento.create') }}">
+                    <x-button><i class="fa fa-plus mr-2" aria-hidden="true"></i> Novo casamento</x-button>
+                </a>
+            </div>
+        @endunless
 
     </main>
 @endsection

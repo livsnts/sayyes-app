@@ -41,7 +41,10 @@ class CasamentoController extends Controller
 
             $casamentos = $query->orderBy('dataCasamento')->get();
 
-            return view('casamento.index', compact('casamentos'));
+            $noivoTemCasamentoAtivo = auth()->user()->tipoUsuario === 'NOIVO'
+                && auth()->user()->casamentos()->where('statusCasamento', 'ATIVO')->exists();
+
+            return view('casamento.index', compact('casamentos', 'noivoTemCasamentoAtivo'));
         }
 
         $casamento = auth()->user()->casamentos()->first();
@@ -79,7 +82,7 @@ class CasamentoController extends Controller
             'nomeCasamento' => ['required', 'string', 'max:255'],
             'dataCasamento' => ['required', 'date', 'after:today'],
             'localCasamento' => ['nullable', 'string', 'max:255'],
-            'orcamentoTotal' => ['required', 'numeric', 'min:0'],
+            'orcamentoTotal' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
             'descricaoCasamento' => ['nullable', 'string', 'max:1000'],
             'urlListaDePresentes' => ['nullable', 'url'],
             'imagemCasamento' => ['nullable', 'image', 'max:2048'],
@@ -91,6 +94,7 @@ class CasamentoController extends Controller
             'imagemCasamento.image' => 'O arquivo deve ser uma imagem.',
             'imagemCasamento.max' => 'A imagem deve ter no máximo 2MB.',
             'orcamentoTotal.numeric' => 'O orçamento deve ser um número.',
+            'orcamentoTotal.max' => 'O orçamento não pode ultrapassar R$ 99.999.999,99.',
             'orcamentoTotal.required' => 'Você precisa inserir uma previsão de orçamento. Caso ainda não tenha uma, adicione um valor aproximado.',
         ]);
 
@@ -157,11 +161,37 @@ class CasamentoController extends Controller
             'nomeCasamento' => ['required', 'string', 'max:255'],
             'dataCasamento' => $regraData,
             'localCasamento' => ['nullable', 'string', 'max:255'],
-            'orcamentoTotal' => ['required', 'numeric', 'min:0'],
+            'orcamentoTotal' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
             'descricaoCasamento' => ['nullable', 'string', 'max:1000'],
             'urlListaDePresentes' => ['nullable', 'url'],
             'imagemCasamento' => ['nullable', 'image', 'max:2048'],
+        ], [
+            'nomeCasamento.required' => 'O nome do casamento é obrigatório.',
+            'dataCasamento.required' => 'A data é obrigatória.',
+            'dataCasamento.after' => 'A data deve ser no futuro.',
+            'urlListaDePresentes.url' => 'Informe uma URL válida.',
+            'imagemCasamento.image' => 'O arquivo deve ser uma imagem.',
+            'imagemCasamento.max' => 'A imagem deve ter no máximo 2MB.',
+            'orcamentoTotal.numeric' => 'O orçamento deve ser um número.',
+            'orcamentoTotal.max' => 'O orçamento não pode ultrapassar R$ 99.999.999,99.',
+            'orcamentoTotal.required' => 'Você precisa inserir uma previsão de orçamento. Caso ainda não tenha uma, adicione um valor aproximado.',
         ]);
+
+        if ($request->statusCasamento === 'ATIVO' && $casamento->statusCasamento !== 'ATIVO') {
+            $noivoOcupado = $casamento->usuarios()
+                ->where('tipoUsuario', 'NOIVO')
+                ->whereHas('casamentos', function ($query) use ($casamento) {
+                    $query->where('statusCasamento', 'ATIVO')
+                        ->where('casamentos.id', '!=', $casamento->id);
+                })
+                ->exists();
+
+            if ($noivoOcupado) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['statusCasamento' => 'Um dos noivos deste casamento já participa de outro casamento ativo.']);
+            }
+        }
 
         $dados = $request->only([
             'nomeCasamento',
@@ -203,8 +233,10 @@ class CasamentoController extends Controller
             return response()->json(['encontrado' => false, 'ja_membro' => true]);
         }
 
-        if ($usuario->tipoUsuario === 'NOIVO'
-            && $usuario->casamentos()->where('statusCasamento', 'ATIVO')->exists()) {
+        if (
+            $usuario->tipoUsuario === 'NOIVO'
+            && $usuario->casamentos()->where('statusCasamento', 'ATIVO')->exists()
+        ) {
             return response()->json(['encontrado' => false, 'noivo_ocupado' => true]);
         }
 
@@ -233,8 +265,10 @@ class CasamentoController extends Controller
         $usuario = User::findOrFail($request->user_id);
 
         // regra: um noivo participa de no máximo um casamento ativo
-        if ($usuario->tipoUsuario === 'NOIVO'
-            && $usuario->casamentos()->where('statusCasamento', 'ATIVO')->exists()) {
+        if (
+            $usuario->tipoUsuario === 'NOIVO'
+            && $usuario->casamentos()->where('statusCasamento', 'ATIVO')->exists()
+        ) {
             return back()->with('erro', 'Este noivo já participa de outro casamento ativo.');
         }
 
