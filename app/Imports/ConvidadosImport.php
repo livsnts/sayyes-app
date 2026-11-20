@@ -44,7 +44,6 @@ class ConvidadosImport implements ToCollection, WithHeadingRow
                 'telefoneConvidado' => $linha['telefone'] ?? null,
                 'faixaEtariaConvidado' => $this->converterEnum(FaixaEtaria::class, $linha['faixa_etaria'] ?? null),
                 'generoConvidado' => $this->converterEnum(Genero::class, $linha['genero'] ?? null),
-                'quantidadeMaxAcompanhantes' => count($acompanhantes),
             ]);
 
             $convidado->acompanhantes()->createMany($acompanhantes);

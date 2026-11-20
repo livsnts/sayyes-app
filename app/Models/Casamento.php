@@ -53,7 +53,7 @@ class Casamento extends Model
         return $this->usuarios()->where('tipoUsuario', 'ASSESSOR');
     }
 
-    
+
     // Pessoas que entram no cálculo dos fornecedores: tudo, exceto recusados.
     public function contagemPessoas(): array
     {
@@ -61,5 +61,11 @@ class Casamento extends Model
             ->flatMap(fn(Convidado $convidado) => $convidado->faixasEtariasComStatus(['PENDENTE', 'CONFIRMADO']));
 
         return Convidado::resumoFaixas($faixas);
+    }
+
+    // só casamentos ATIVOS recebem confirmação de presença
+    public function aceitaConfirmacao(): bool
+    {
+        return $this->statusCasamento === 'ATIVO';
     }
 }

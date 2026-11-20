@@ -117,7 +117,6 @@ class ConvidadoController extends Controller
             'telefoneConvidado' => $request->telefoneConvidado,
             'faixaEtariaConvidado' => $request->faixaEtariaConvidado,
             'generoConvidado' => $request->generoConvidado,
-            'quantidadeMaxAcompanhantes' => count($acompanhantes),
         ]);
 
         foreach ($acompanhantes as $acompanhante) {
@@ -198,7 +197,6 @@ class ConvidadoController extends Controller
             'faixaEtariaConvidado' => $request->faixaEtariaConvidado,
             'generoConvidado' => $request->generoConvidado,
             'observacoesConfirmacao' => $request->observacoesConfirmacao,
-            'quantidadeMaxAcompanhantes' => count($acompanhantes),
         ]);
 
         $idsMantidos = [];
@@ -233,9 +231,13 @@ class ConvidadoController extends Controller
 
     public function salvarConfirmacao(Request $request, string $token)
     {
-        $convidado = Convidado::with('acompanhantes')
+        $convidado = Convidado::with(['acompanhantes', 'casamento'])
             ->where('tokenConfirmacao', $token)
             ->firstOrFail();
+
+        if (!$convidado->casamento->aceitaConfirmacao()) {
+            return back()->with('erro', 'As confirmações deste casamento estão encerradas.');
+        }
 
         $request->validate([
             'convidadoVai' => ['nullable', 'boolean'],

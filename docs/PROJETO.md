@@ -84,7 +84,7 @@ casamento_id (FK)*, user_id (FK)*
 ```
 id (PK), statusConvidado (PENDENTE | CONFIRMADO | RECUSADO)*,
 nomeConvidado*, telefoneConvidado, faixaEtariaConvidado, generoConvidado,
-tokenConfirmacao* (UUID), quantidadeMaxAcompanhantes*, dataConfirmacao,
+tokenConfirmacao* (UUID), dataConfirmacao,
 observacoesConfirmacao, casamento_id (FK)*
 ```
 > `faixaEtariaConvidado` usa o enum `App\Enums\FaixaEtaria`: Bebê (0 a 3 anos), Criança (4 a 7), Infantil (8 a 12) e Adulto (13 ou mais). Convidado sem faixa preenchida conta como adulto nos totais.

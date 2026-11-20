@@ -17,7 +17,6 @@ use App\Enums\Genero;
     'statusConvidado',
     'nomeConvidado',
     'telefoneConvidado',
-    'quantidadeMaxAcompanhantes',
     'dataConfirmacao',
     'observacoesConfirmacao',
     'faixaEtariaConvidado',

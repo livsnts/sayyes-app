@@ -264,7 +264,7 @@ class CasamentoController extends Controller
 
         $usuario = User::findOrFail($request->user_id);
 
-        // regra: um noivo participa de no máximo um casamento ativo
+        // um noivo participa de no máximo um casamento ativo
         if (
             $usuario->tipoUsuario === 'NOIVO'
             && $usuario->casamentos()->where('statusCasamento', 'ATIVO')->exists()

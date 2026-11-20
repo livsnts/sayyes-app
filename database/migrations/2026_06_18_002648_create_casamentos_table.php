@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('orcamentoTotal', 10, 2)->nullable();
             $table->string('localCasamento')->nullable();
             $table->text('descricaoCasamento')->nullable();
-            $table->binary('imagemCasamento')->nullable();
+            $table->string('imagemCasamento')->nullable();
             $table->text('urlListaDePresentes')->nullable();
             $table->timestamps();
         });

@@ -31,42 +31,50 @@
                 .
             </p>
 
-            <form method="POST" action="{{ route('convidado.salvar-confirmacao', $convidado->tokenConfirmacao) }}">
-                @csrf
+            @if ($convidado->casamento->aceitaConfirmacao())
+                <form method="POST" action="{{ route('convidado.salvar-confirmacao', $convidado->tokenConfirmacao) }}">
+                    @csrf
 
-                <p class="text-primary font-semibold mt-6 mb-2">Quem vai comparecer?</p>
+                    <p class="text-primary font-semibold mt-6 mb-2">Quem vai comparecer?</p>
 
-                <div class="flex flex-col gap-3">
+                    <div class="flex flex-col gap-3">
 
-                    {{-- convidado principal --}}
-                    <label class="flex items-center gap-3 text-primary cursor-pointer">
-                        <input type="checkbox" name="convidadoVai" value="1" class="size-5 accent-primary"
-                            @checked(old('convidadoVai', $convidado->statusConvidado === 'CONFIRMADO'))>
-                        <span>{{ $convidado->nomeConvidado }} <span class="text-sm opacity-70">(você)</span></span>
-                    </label>
-
-                    {{-- acompanhantes --}}
-                    @foreach ($convidado->acompanhantes as $acompanhante)
+                        {{-- convidado principal --}}
                         <label class="flex items-center gap-3 text-primary cursor-pointer">
-                            <input type="checkbox" name="acompanhantesQueVao[]" value="{{ $acompanhante->id }}"
-                                class="size-5 accent-primary" @checked(in_array($acompanhante->id, old('acompanhantesQueVao', $convidado->acompanhantes->where('statusAcompanhante', 'CONFIRMADO')->pluck('id')->all())))>
-                            <span>{{ $acompanhante->nomeAcompanhante }}</span>
+                            <input type="checkbox" name="convidadoVai" value="1" class="size-5 accent-primary"
+                                @checked(old('convidadoVai', $convidado->statusConvidado === 'CONFIRMADO'))>
+                            <span>{{ $convidado->nomeConvidado }} <span class="text-sm opacity-70">(você)</span></span>
                         </label>
-                    @endforeach
-                </div>
 
-                <p class="text-sm text-primary opacity-70 mt-3">
-                    Se ninguém puder ir, deixe tudo desmarcado e envie a resposta.
+                        {{-- acompanhantes --}}
+                        @foreach ($convidado->acompanhantes as $acompanhante)
+                            <label class="flex items-center gap-3 text-primary cursor-pointer">
+                                <input type="checkbox" name="acompanhantesQueVao[]" value="{{ $acompanhante->id }}"
+                                    class="size-5 accent-primary" @checked(in_array($acompanhante->id, old('acompanhantesQueVao', $convidado->acompanhantes->where('statusAcompanhante', 'CONFIRMADO')->pluck('id')->all())))>
+                                <span>{{ $acompanhante->nomeAcompanhante }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+
+                    <p class="text-sm text-primary opacity-70 mt-3">
+                        Se ninguém puder ir, deixe tudo desmarcado e envie a resposta.
+                    </p>
+
+                    <x-textarea label="Observações (opcional)" name="observacoesConfirmacao"
+                        placeholder="Restrição alimentar, recado para os noivos..."
+                        :value="$convidado->observacoesConfirmacao" />
+
+                    <x-button type="submit" class="py-3 mt-6 w-full">
+                        Enviar resposta
+                    </x-button>
+                </form>
+
+            @else
+                <p class="text-primary text-center mt-6">
+                    As confirmações de presença deste casamento foram encerradas.
+                    Em caso de dúvida, fale diretamente com os noivos.
                 </p>
-
-                <x-textarea label="Observações (opcional)" name="observacoesConfirmacao"
-                    placeholder="Restrição alimentar, recado para os noivos..."
-                    :value="$convidado->observacoesConfirmacao" />
-
-                <x-button type="submit" class="py-3 mt-6 w-full">
-                    Enviar resposta
-                </x-button>
-            </form>
+            @endif
 
             @if ($convidado->dataConfirmacao)
                 <p class="text-sm text-primary opacity-70 mt-4 text-center">

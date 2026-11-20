@@ -1,5 +1,5 @@
 @php
-    // sem "R$ " no início, igual à tela de editar casamento; a máscara coloca o prefixo
+    // sem "R$ " no início, a máscara coloca o prefixo
     $formatar = fn($valor) => $valor !== null ? number_format($valor, 2, ',', '.') : '';
 @endphp
 
@@ -13,6 +13,7 @@
         crianca: @js($formatar($fornecedor->valorCriancaFornecedorCasamento)),
         qtdAdultos: @js($fornecedor->quantidadeAdultosFornecedorCasamento ?? ''),
         qtdCriancas: @js($fornecedor->quantidadeCriancasFornecedorCasamento ?? ''),
+        taxa: @js($formatar($fornecedor->taxaAdicionalFornecedorCasamento)),
         total: @js($formatar($fornecedor->valorTotalFornecedorCasamento)),
         paraNumero(valor) {
             return parseFloat((valor || '').replace(/[^\d,]/g, '').replace(',', '.')) || 0;
@@ -20,11 +21,12 @@
         calcularTotal() {
             if (this.tipo !== 'POR_PESSOA') { return; }
             const soma = this.paraNumero(this.adulto) * (parseInt(this.qtdAdultos) || 0)
-                + this.paraNumero(this.crianca) * (parseInt(this.qtdCriancas) || 0);
+                + this.paraNumero(this.crianca) * (parseInt(this.qtdCriancas) || 0)
+                + this.paraNumero(this.taxa);
             this.total = 'R$ ' + soma.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
     }"
-        x-init="['adulto', 'crianca', 'qtdAdultos', 'qtdCriancas'].forEach(campo => $watch(campo, () => calcularTotal()))">
+        x-init="['adulto', 'crianca', 'qtdAdultos', 'qtdCriancas', 'taxa'].forEach(campo => $watch(campo, () => calcularTotal()))">
         @csrf
         @method('PUT')
 
@@ -101,15 +103,24 @@
                     name="quantidadeCriancas" x-model="qtdCriancas" :disabled="tipo !== 'POR_PESSOA'"
                     class="field-input">
             </div>
+
+            <div class="flex flex-col gap-2 mt-4">
+                <label for="taxa-{{ $fornecedor->id }}" class="text-primary">Taxas adicionais (ex.:
+                    deslocamento)</label>
+                <input type="text" id="taxa-{{ $fornecedor->id }}" name="taxa" inputmode="numeric" x-model="taxa"
+                    :disabled="tipo !== 'POR_PESSOA'" x-mask:dynamic="'R$ ' + $money($input, ',', '.', 2)"
+                    class="field-input">
+            </div>
         </div>
 
         <div class="flex flex-col gap-2 mt-4">
             <label for="valorTotal-{{ $fornecedor->id }}" class="text-primary">Valor total*</label>
-            <input type="text" id="valorTotal-{{ $fornecedor->id }}" name="valorTotal" inputmode="numeric"
-                x-model="total" x-mask:dynamic="'R$ ' + $money($input, ',', '.', 2)" class="field-input">
+            <input type="text" id="valorTotal" name="valorTotal" inputmode="numeric" x-model="total"
+                :readonly="tipo === 'POR_PESSOA'" :class="tipo === 'POR_PESSOA' && 'opacity-70 cursor-not-allowed'"
+                x-mask:dynamic="'R$ ' + $money($input, ',', '.', 2)" class="field-input">
             <span class="text-xs text-text-muted" x-show="tipo === 'POR_PESSOA'" x-cloak>
                 Calculado como (valor por adulto × quantidade de adultos) + (valor por criança × quantidade de
-                crianças). Você pode editar o valor.
+                crianças) + taxas adicionais.
             </span>
         </div>
 

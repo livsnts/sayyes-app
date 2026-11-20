@@ -7,4 +7,5 @@
 - Entender melhor o alpine js (xshow, xbind, xcloak)
 - Lembrar onde redireciona quando o noivo não faz parte do casamento
 - Diferença do "Realizado" do casamento pro "Atrasado" da parcela
+- por que deixar alguns metodos no model e outros no controller (ex. aceitaConfirmacao e contagemPessoas no Model de casamento)
 php artisan casamentos:atualizar-status 

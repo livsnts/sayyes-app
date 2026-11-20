@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'contratoFornecedorCasamento',
     'observacoesFornecedorCasamento',
     'totalParcelas',
+    'taxaAdicionalFornecedorCasamento'
 ])]
 class FornecedorCasamento extends Model
 {
@@ -47,6 +48,7 @@ class FornecedorCasamento extends Model
             'valorTotalFornecedorCasamento' => 'decimal:2',
             'valorAdultoFornecedorCasamento' => 'decimal:2',
             'valorCriancaFornecedorCasamento' => 'decimal:2',
+            'taxaAdicionalFornecedorCasamento' => 'decimal:2',
         ];
     }
 

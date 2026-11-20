@@ -6,8 +6,6 @@
 
         <h1 class="titulo">Meu Perfil</h1>
 
-        <x-flash-messages />
-
         <x-card-sketch class="mb-6">
             <div class="flex items-center gap-5">
                 <div

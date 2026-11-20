@@ -98,7 +98,7 @@ class FornecedorCasamentoController extends Controller
     private function validar(Request $request): array
     {
         // converte preço com máscara em decimal antes de validar
-        foreach (['valorTotal', 'valorAdulto', 'valorCrianca'] as $campo) {
+        foreach (['valorTotal', 'valorAdulto', 'valorCrianca', 'taxa'] as $campo) {
             $request->merge([$campo => $this->converterValor($request->input($campo))]);
         }
 
@@ -113,6 +113,7 @@ class FornecedorCasamentoController extends Controller
             'valorCrianca' => ['required_if:tipoValorFornecedorCasamento,POR_PESSOA', 'nullable', 'numeric', 'min:0'],
             'quantidadeAdultos' => ['required_if:tipoValorFornecedorCasamento,POR_PESSOA', 'nullable', 'integer', 'min:0'],
             'quantidadeCriancas' => ['required_if:tipoValorFornecedorCasamento,POR_PESSOA', 'nullable', 'integer', 'min:0'],
+            'taxa' => ['nullable', 'numeric', 'min:0'],
             'observacoesFornecedorCasamento' => ['nullable', 'string', 'max:1000'],
         ], [
             'nomeFornecedorCasamento.required' => 'O nome do fornecedor é obrigatório.',
@@ -127,6 +128,7 @@ class FornecedorCasamentoController extends Controller
             'quantidadeCriancas.required_if' => 'Informe a quantidade de crianças (pode ser 0).',
             'quantidadeAdultos.integer' => 'A quantidade de adultos deve ser um número inteiro.',
             'quantidadeCriancas.integer' => 'A quantidade de crianças deve ser um número inteiro.',
+            'taxa.numeric' => 'A taxa deve ser um número.',
         ]);
     }
 
@@ -144,17 +146,25 @@ class FornecedorCasamentoController extends Controller
     {
         $porPessoa = $dados['tipoValorFornecedorCasamento'] === TipoValorFornecedor::PorPessoa->value;
 
+        // recalcula o valor enviado no front
+        $valorTotal = $porPessoa
+            ? ($dados['valorAdulto'] * $dados['quantidadeAdultos'])
+            + ($dados['valorCrianca'] * $dados['quantidadeCriancas'])
+            + ($dados['taxa'] ?? 0)
+            : $dados['valorTotal'];
+
         return [
             'nomeFornecedorCasamento' => $dados['nomeFornecedorCasamento'],
             'categoriaFornecedorCasamento' => $dados['categoriaFornecedorCasamento'],
             'statusFornecedorCasamento' => $dados['statusFornecedorCasamento'],
             'telefoneFornecedorCasamento' => $dados['telefoneFornecedorCasamento'] ?? null,
             'tipoValorFornecedorCasamento' => $dados['tipoValorFornecedorCasamento'],
-            'valorTotalFornecedorCasamento' => $dados['valorTotal'],
+            'valorTotalFornecedorCasamento' => $valorTotal,
             'valorAdultoFornecedorCasamento' => $porPessoa ? $dados['valorAdulto'] : null,
             'valorCriancaFornecedorCasamento' => $porPessoa ? $dados['valorCrianca'] : null,
             'quantidadeAdultosFornecedorCasamento' => $porPessoa ? $dados['quantidadeAdultos'] : null,
             'quantidadeCriancasFornecedorCasamento' => $porPessoa ? $dados['quantidadeCriancas'] : null,
+            'taxaAdicionalFornecedorCasamento' => $porPessoa ? ($dados['taxa'] ?? null) : null,
             'observacoesFornecedorCasamento' => $dados['observacoesFornecedorCasamento'] ?? null,
         ];
     }
