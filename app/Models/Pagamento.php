@@ -24,19 +24,19 @@ class Pagamento extends Model
     protected function casts(): array
     {
         return [
-            'valorParcela'   => 'decimal:2',
+            'valorParcela' => 'decimal:2',
             'dataVencimento' => 'date',
-            'dataPagamento'  => 'date',
+            'dataPagamento' => 'date',
         ];
     }
 
-    public function statusReal(): string 
+    public function statusReal(): string
     {
-        if($this->statusPagamento === 'PAGO') {
+        if ($this->statusPagamento === 'PAGO') {
             return 'PAGO';
         }
 
-        if($this->dataVencimento && $this->dataVencimento->isPast()) {
+        if ($this->dataVencimento && $this->dataVencimento->lt(today())) {
             return 'ATRASADO';
         }
 

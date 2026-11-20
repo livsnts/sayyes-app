@@ -60,11 +60,6 @@ class FornecedorCasamento extends Model
         return $this->belongsTo(FornecedorConfianca::class);
     }
 
-    public function orcamento(): HasOne
-    {
-        return $this->hasOne(OrcamentoFornecedor::class);
-    }
-
     public function pagamentos(): HasMany
     {
         return $this->hasMany(Pagamento::class)->orderBy('numeroParcela');

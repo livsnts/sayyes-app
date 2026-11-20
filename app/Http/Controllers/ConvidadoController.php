@@ -164,16 +164,10 @@ class ConvidadoController extends Controller
         return redirect()->route('convidado.create', $casamento)->with('sucesso', 'Convidados importados com sucesso!');
     }
 
-    public function edit(Casamento $casamento, Convidado $convidado)
-    {
-        $this->authorize('view', $casamento);
-
-        return view('convidados.edit', compact('casamento', 'convidado'));
-    }
-
     public function update(Request $request, Casamento $casamento, Convidado $convidado)
     {
         $this->authorize('view', $casamento);
+        abort_unless($convidado->casamento_id === $casamento->id, 404);
 
         $request->validate([
             'nomeConvidado' => ['required', 'string', 'max:255'],

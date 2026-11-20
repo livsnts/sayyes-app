@@ -48,11 +48,6 @@ class Casamento extends Model
         return $this->hasMany(FornecedorCasamento::class);
     }
 
-    public function orcamentos(): HasMany
-    {
-        return $this->hasMany(OrcamentoFornecedor::class);
-    }
-
     public function assessores(): BelongsToMany
     {
         return $this->usuarios()->where('tipoUsuario', 'ASSESSOR');

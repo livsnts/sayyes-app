@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Rules\CpfValido;
 use Illuminate\Validation\Rules\Password;
-
+use Illuminate\Validation\Rule;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -28,11 +28,20 @@ class UsuarioController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge(['cpf' => preg_replace('/\D/', '', $request->cpf)]);
+
+        $tipoSalvo = in_array($request->tipoUsuario, ['NOIVA', 'NOIVO']) ? 'NOIVO' : 'ASSESSOR';
+
         $request->validate(
             [
                 'name' => ['required', 'string', 'max:255'],
                 'telefone' => ['required', 'string'],
-                'cpf' => ['required', 'string', 'unique:users,cpfUsuario', new CpfValido],
+                'cpf' => [
+                    'required',
+                    'string',
+                    Rule::unique('users', 'cpfUsuario')->where('tipoUsuario', $tipoSalvo),
+                    new CpfValido,
+                ],
                 'cidade' => ['required', 'string'],
                 'tipoUsuario' => ['required', 'in:NOIVA,NOIVO,ASSESSOR'],
                 'email' => ['required', 'email', 'unique:users,email'],
@@ -42,7 +51,7 @@ class UsuarioController extends Controller
                 'name.required' => 'O nome é obrigatório.',
                 'telefone.required' => 'O telefone é obrigatório.',
                 'cpf.required' => 'O CPF é obrigatório.',
-                'cpf.unique' => 'Este CPF já está cadastrado.',
+                'cpf.unique' => 'Já existe uma conta deste tipo com este CPF.',
                 'cidade.required' => 'A cidade é obrigatória.',
                 'tipoUsuario.required' => 'Selecione o tipo de usuário.',
                 'tipoUsuario.in' => 'Tipo de usuário inválido.',
@@ -64,7 +73,7 @@ class UsuarioController extends Controller
             'telefoneUsuario' => $request->telefone,
             'cpfUsuario' => $request->cpf,
             'cidadeUsuario' => $request->cidade,
-            'tipoUsuario' => in_array($request->tipoUsuario, ['NOIVA', 'NOIVO']) ? 'NOIVO' : 'ASSESSOR',
+            'tipoUsuario' => $tipoSalvo,
             'sexoUsuario' => match ($request->tipoUsuario) {
                 'NOIVA' => 'F',
                 'NOIVO' => 'M',

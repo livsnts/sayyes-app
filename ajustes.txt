@@ -1,5 +1,3 @@
-- convidado-acoes.blade.php não é usado em lugar nenhum
-- CPF não poderia ser unique se não tem como trocar o tipo do usuário
 - Na equipe do casamento, ao buscar o membro, ambos o noivo e a noiva ficam como "NOIVO"
 - Entender melhor o vinculo da herança dos fornecedores de confiança
 - Genero dos convidados está sem uso

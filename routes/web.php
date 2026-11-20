@@ -61,7 +61,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/casamentos/{casamento}/convidados', [ConvidadoController::class, 'store'])->name('convidado.store');
     Route::post('/casamentos/{casamento}/convidados/importar', [ConvidadoController::class, 'importar'])->name('convidado.importar');
     Route::get('/casamentos/{casamento}/convidados/modelo', [ConvidadoController::class, 'modelo'])->name('convidado.modelo');
-    Route::get('/casamentos/{casamento}/convidados/{convidado}/editar', [ConvidadoController::class, 'edit'])->name('convidado.edit');
     Route::put('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'update'])->name('convidado.update');
     Route::delete('/casamentos/{casamento}/convidados/{convidado}', [ConvidadoController::class, 'destroy'])->name('convidado.destroy');
 
@@ -87,6 +86,3 @@ Route::middleware('auth')->group(function () {
 // ------ confirmação de presença via token --------
 Route::get('/confirmar/{token}', [ConvidadoController::class, 'confirmar'])->name('convidado.confirmar');
 Route::post('/confirmar/{token}', [ConvidadoController::class, 'salvarConfirmacao'])->name('convidado.salvar-confirmacao');
-
-Route::get('/teste-403', fn () => abort(403));
-Route::get('/teste-500', fn () => abort(500));

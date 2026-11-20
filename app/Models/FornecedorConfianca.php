@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'categoriaFornecedorConfianca',
     'telefoneFornecedorConfianca',
     'instagramFornecedorConfianca',
-    // cidadeFornecedor investimentoBaixoMedioAlto 
 ])]
 
 class FornecedorConfianca extends Model
@@ -36,10 +35,5 @@ class FornecedorConfianca extends Model
     public function fornecedorCasamentos(): HasMany
     {
         return $this->hasMany(FornecedorCasamento::class);
-    }
-
-    public function orcamentos(): HasMany
-    {
-        return $this->hasMany(OrcamentoFornecedor::class);
     }
 }

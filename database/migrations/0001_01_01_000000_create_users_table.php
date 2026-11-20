@@ -20,12 +20,13 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->string('telefoneUsuario');
-            $table->string('cpfUsuario')->unique();
+            $table->string('cpfUsuario');
             $table->string('sexoUsuario')->nullable();
             $table->string('cepUsuario')->nullable();
             $table->string('cidadeUsuario')->nullable();
             $table->enum('tipoUsuario', ['NOIVO', 'ASSESSOR', 'ADMIN']);
             $table->enum('statusUsuario', ['ATIVO', 'INATIVO'])->default('ATIVO');
+            $table->unique(['cpfUsuario', 'tipoUsuario']);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

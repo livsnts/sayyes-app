@@ -180,7 +180,7 @@ class FornecedorCasamentoController extends Controller
             $f->observacoesFornecedorCasamento,
         ])->all();
 
-        return $this->baixarRelatorio('Fornecedores de confiança', $cabecalhos, $linhas);
+        return $this->baixarRelatorio('Fornecedores do casamento', $cabecalhos, $linhas);
     }
 }
 
