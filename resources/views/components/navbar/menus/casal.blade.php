@@ -12,14 +12,6 @@
         Início
     </a>
 
-    <a href="/financas" class="nav-link">
-        Finanças
-    </a>
-
-    <a href="/blog" class="nav-link">
-        Blog dos noivos
-    </a>
-
     @if ($totalCasamentos > 0)
         <a href="{{ route('casamento.index') }}" class="nav-link">
             {{ $totalCasamentos > 1 ? 'Meus casamentos' : 'Meu casamento' }}

@@ -1,13 +1,12 @@
-- Noivos podem desativar um casamento, cadastrar um outro depois alterar o status do casamento inativo para ativo e ficar com dois ativos
-- Precisava ter como desvincular a pessoa do casamento
-- Tinha que ter uma data limite pra confirmação
 - convidado-acoes.blade.php não é usado em lugar nenhum
 - CPF não poderia ser unique se não tem como trocar o tipo do usuário
 - Na equipe do casamento, ao buscar o membro, ambos o noivo e a noiva ficam como "NOIVO"
-- IMPORTAR PLANILHA NAO TEM ACOMPANHANTES!!!!!!!!!!!!!!!!!!!
 - Entender melhor o vinculo da herança dos fornecedores de confiança
-- PÁGINA INICIAL
 - Genero dos convidados está sem uso
 - Faixa etária calcula criança
 - Valor pago na tela de fornecedores do casamento
 - Lembrar onde fica a lógica de mostragem de "Meu casamento" e "Criar casamento" na navbar
+- Entender melhor o alpine js (xshow, xbind, xcloak)
+- Lembrar onde redireciona quando o noivo não faz parte do casamento
+- Diferença do "Realizado" do casamento pro "Atrasado" da parcela
+php artisan casamentos:atualizar-status

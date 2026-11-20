@@ -24,7 +24,7 @@
                 @foreach ($membros as $membro)
                     <div class="flex items-center gap-4 border-2 border-primary/20 rounded-lg px-4 py-3">
                         <x-tipo-usuario-icone :usuario="$membro" />
-                        <div>
+                        <div class="flex-1">
                             <p class="font-semibold text-primary">{{ $membro->name }}</p>
                             <p class="text-text-muted text-sm">
                                 {{ $membro->telefoneUsuario }}
@@ -32,6 +32,17 @@
                                 {{ $membro->email }}
                             </p>
                         </div>
+
+                        @if ($membro->id !== auth()->id())
+                            <form method="POST" action="{{ route('casamento.remover-membro', [$casamento, $membro]) }}"
+                                onsubmit="return confirm('Remover {{ $membro->name }} deste casamento?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-800" title="Remover do casamento">
+                                    <i class="fa-solid fa-user-minus"></i>
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -39,32 +50,32 @@
 
         {{-- Adicionar membro --}}
         <div class="card-sketch" x-data="{
-                        email: '',
-                        resultado: null,
-                        jaMembro: false,
-                        noivoOcupado: false,
-                        naoEncontrado: false,
-                        carregando: false,
-                        async buscar() {
-                            this.resultado = null;
-                            this.jaMembro = false;
-                            this.noivoOcupado = false;
-                            this.naoEncontrado = false;
-                            this.carregando = true;
-                            const res = await fetch('{{ route('casamento.buscar-usuario', $casamento) }}?email=' + encodeURIComponent(this.email));
-                            const data = await res.json();
-                            this.carregando = false;
-                            if (data.ja_membro) {
-                                this.jaMembro = true;
-                            } else if (data.noivo_ocupado) {
-                                this.noivoOcupado = true;
-                            } else if (data.encontrado) {
-                                this.resultado = data;
-                            } else {
-                                this.naoEncontrado = true;
+                            email: '',
+                            resultado: null,
+                            jaMembro: false,
+                            noivoOcupado: false,
+                            naoEncontrado: false,
+                            carregando: false,
+                            async buscar() {
+                                this.resultado = null;
+                                this.jaMembro = false;
+                                this.noivoOcupado = false;
+                                this.naoEncontrado = false;
+                                this.carregando = true;
+                                const res = await fetch('{{ route('casamento.buscar-usuario', $casamento) }}?email=' + encodeURIComponent(this.email));
+                                const data = await res.json();
+                                this.carregando = false;
+                                if (data.ja_membro) {
+                                    this.jaMembro = true;
+                                } else if (data.noivo_ocupado) {
+                                    this.noivoOcupado = true;
+                                } else if (data.encontrado) {
+                                    this.resultado = data;
+                                } else {
+                                    this.naoEncontrado = true;
+                                }
                             }
-                        }
-                    }">
+                        }">
             <h2 class="titulo-card">Adicionar membro</h2>
 
             <form @submit.prevent="buscar" class="flex gap-3 mb-4">

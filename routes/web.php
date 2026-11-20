@@ -14,11 +14,15 @@ Route::get('/', function () {
     return view('inicio');
 })->name('inicio');
 
-Route::get('/cadastro', [UsuarioController::class, 'create'])->name('cadastro');
-Route::post('/cadastro', [UsuarioController::class, 'store'])->name('cadastro.store');
+// ----- Visitantes -----
+Route::middleware('guest')->group(function () {
+    Route::get('/cadastro', [UsuarioController::class, 'create'])->name('cadastro');
+    Route::post('/cadastro', [UsuarioController::class, 'store'])->name('cadastro.store');
 
-Route::get('/login', [AuthController::class, 'create'])->name('login');
-Route::post('/login', [AuthController::class, 'store'])->name('login.store');
+    Route::get('/login', [AuthController::class, 'create'])->name('login');
+    Route::post('/login', [AuthController::class, 'store'])->name('login.store');
+});
+
 Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
 
 // ----- Redefinição de senha -----
@@ -45,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/casamentos/{casamento}/equipe', [CasamentoController::class, 'equipe'])->name('casamento.equipe');
     Route::get('/casamentos/{casamento}/buscar-usuario', [CasamentoController::class, 'buscarUsuario'])->name('casamento.buscar-usuario');
     Route::post('/casamentos/{casamento}/adicionar-membro', [CasamentoController::class, 'adicionarMembro'])->name('casamento.adicionar-membro');
+    Route::delete('/casamentos/{casamento}/membros/{usuario}', [CasamentoController::class, 'removerMembro'])->name('casamento.remover-membro');
 
     Route::get('/casamentos/{casamento}/convidados/relatorio', [ConvidadoController::class, 'relatorio'])->name('convidado.relatorio');
     Route::get('/casamentos/{casamento}/fornecedores/relatorio', [FornecedorCasamentoController::class, 'relatorio'])->name('fornecedor-casamento.relatorio');

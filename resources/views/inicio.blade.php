@@ -141,33 +141,35 @@
     </section>
 
     {{-- Seção: Chamada para ação (CTA) --}}
-    <section class="max-w-7xl mx-auto px-8 py-10">
+    @guest
+        <section class="max-w-7xl mx-auto px-8 py-10">
 
-        <div class="bg-primary rounded-[2.5rem] px-8 py-14 text-center">
+            <div class="bg-primary rounded-[2.5rem] px-8 py-14 text-center">
 
-            <h2 class="font-primary font-bold text-background text-3xl lg:text-4xl">
-                Pronto para dizer sim à organização?
-            </h2>
+                <h2 class="font-primary font-bold text-background text-3xl lg:text-4xl">
+                    Pronto para dizer sim à organização?
+                </h2>
 
-            <p class="mt-4 font-secondary text-background text-lg">
-                Crie sua conta e comece a planejar o seu casamento hoje.
-            </p>
+                <p class="mt-4 font-secondary text-background text-lg">
+                    Crie sua conta e comece a planejar o seu casamento hoje.
+                </p>
 
-            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
 
-                <a href="{{ route('cadastro') }}"
-                    class="px-8 py-2 rounded-lg border-2 border-background bg-background text-primary font-bold transition-colors duration-200 hover:opacity-90">
-                    Criar conta
-                </a>
+                    <a href="{{ route('cadastro') }}"
+                        class="px-8 py-2 rounded-lg border-2 border-background bg-background text-primary font-bold transition-colors duration-200 hover:opacity-90">
+                        Criar conta
+                    </a>
 
-                <a href="{{ route('login') }}"
-                    class="px-8 py-2 rounded-lg border-2 border-background text-background font-bold transition-colors duration-200 hover:bg-background hover:text-primary">
-                    Entrar
-                </a>
+                    <a href="{{ route('login') }}"
+                        class="px-8 py-2 rounded-lg border-2 border-background text-background font-bold transition-colors duration-200 hover:bg-background hover:text-primary">
+                        Entrar
+                    </a>
+
+                </div>
 
             </div>
 
-        </div>
-
-    </section>
+        </section>
+    @endguest
 @endsection

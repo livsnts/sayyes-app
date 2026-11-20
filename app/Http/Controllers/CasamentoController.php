@@ -277,4 +277,22 @@ class CasamentoController extends Controller
         return back()->with('sucesso', 'Membro adicionado com sucesso!');
     }
 
+    public function removerMembro(Casamento $casamento, User $usuario)
+    {
+        $this->authorize('update', $casamento);
+
+        if ($usuario->id === auth()->id()) {
+            return back()->with('erro', 'Você não pode remover a si mesmo do casamento.');
+        }
+
+        if (!$casamento->usuarios()->where('user_id', $usuario->id)->exists()) {
+            return back()->with('erro', 'Este usuário não é membro do casamento.');
+        }
+
+        // apaga apenas a linha da tabela pivot
+        $casamento->usuarios()->detach($usuario->id);
+
+        return back()->with('sucesso', 'Membro removido do casamento.');
+    }
+
 }
